@@ -269,6 +269,136 @@ img {
   max-width: 960px;
 }
 
+.legacy-content h1 {
+  margin: 0 0 28px;
+  color: #ce1126;
+  font-size: 36px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.legacy-content h2,
+.legacy-content h3 {
+  margin: 32px 0 12px;
+  color: #333;
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.legacy-content h2:first-child,
+.legacy-content h3:first-child {
+  margin-top: 0;
+}
+
+.legacy-content p,
+.legacy-content li {
+  font-size: 16px;
+  line-height: 1.8;
+}
+
+.legacy-content p {
+  margin: 0 0 16px;
+}
+
+.legacy-content ul {
+  margin: 0 0 16px;
+  padding-left: 24px;
+}
+
+.legacy-content a {
+  color: #0a6bb8;
+}
+
+.legacy-success-btn {
+  display: inline-block;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: #fff;
+  background-color: #5cb85c;
+  border: 1px solid #4cae4c;
+  border-radius: 4px;
+  box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.08);
+}
+
+.screenshot-carousel {
+  position: relative;
+  width: 70%;
+  margin: 0 auto;
+  padding-top: 34px;
+  background-color: #333;
+  box-shadow: 0 5px 5px #888;
+}
+
+.screenshot-carousel .carousel-stage {
+  position: relative;
+}
+
+.screenshot-carousel .carousel-stage img {
+  width: 100%;
+  height: auto;
+  margin: auto;
+}
+
+.screenshot-carousel .carousel-indicators {
+  position: absolute;
+  top: 12px;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.screenshot-carousel .carousel-indicators button {
+  width: 10px;
+  height: 10px;
+  padding: 0;
+  border: 1px solid #fff;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+}
+
+.screenshot-carousel .carousel-indicators button.active {
+  background: #fff;
+}
+
+.screenshot-carousel .carousel-control {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 10%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.screenshot-carousel .carousel-control span {
+  color: greenyellow;
+  font-size: 46px;
+  line-height: 1;
+  text-shadow: 0 1px 2px #000;
+}
+
+.screenshot-carousel .carousel-control-left {
+  left: 0;
+}
+
+.screenshot-carousel .carousel-control-right {
+  right: 0;
+}
+
+@media (max-width: 760px) {
+  .screenshot-carousel {
+    width: 100%;
+  }
+}
+
 .hero {
   position: relative;
   min-height: 100vh;

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { ScreenshotCarousel } from '../../../components/ScreenshotCarousel';
 import { SiteFooter } from '../../../components/SiteFooter';
 import { SiteHeader } from '../../../components/SiteHeader';
 import './page.css';
@@ -22,16 +22,6 @@ const screenshotImages = [
 ];
 
 export default function WelcomePage() {
-  const [activeScreenshot, setActiveScreenshot] = useState(2);
-
-  useEffect(() => {
-    const autoplayTimer = window.setInterval(() => {
-      setActiveScreenshot((currentScreenshot) => (currentScreenshot + 1) % screenshotImages.length);
-    }, 5000);
-
-    return () => window.clearInterval(autoplayTimer);
-  }, []);
-
   return (
     <main className="welcome-page portal-page">
       <SiteHeader />
@@ -132,39 +122,7 @@ export default function WelcomePage() {
 
         <section className="welcome-section">
           <h2>Screenshots</h2>
-          <div className="welcome-carousel" aria-label="GPlates Portal screenshots">
-            <div className="carousel-indicators">
-              {screenshotImages.map((image, index) => (
-                <button
-                  key={image.src}
-                  type="button"
-                  className={index === activeScreenshot ? 'active' : ''}
-                  aria-label={`Show ${image.alt}`}
-                  aria-pressed={index === activeScreenshot}
-                  onClick={() => setActiveScreenshot(index)}
-                />
-              ))}
-            </div>
-            <div className="carousel-stage">
-              <img src={screenshotImages[activeScreenshot].src} alt={screenshotImages[activeScreenshot].alt} />
-              <button
-                type="button"
-                className="carousel-control carousel-control-left"
-                aria-label="Previous screenshot"
-                onClick={() => setActiveScreenshot((activeScreenshot - 1 + screenshotImages.length) % screenshotImages.length)}
-              >
-                <span aria-hidden="true">&#8249;</span>
-              </button>
-              <button
-                type="button"
-                className="carousel-control carousel-control-right"
-                aria-label="Next screenshot"
-                onClick={() => setActiveScreenshot((activeScreenshot + 1) % screenshotImages.length)}
-              >
-                <span aria-hidden="true">&#8250;</span>
-              </button>
-            </div>
-          </div>
+          <ScreenshotCarousel images={screenshotImages} autoplayMs={5000} initialIndex={2} label="GPlates Portal screenshots" />
         </section>
 
         <section className="welcome-section">

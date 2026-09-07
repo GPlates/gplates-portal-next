@@ -64,7 +64,7 @@ export default function FaqPage() {
   return (
     <main className="portal-page faq-page">
       <SiteHeader />
-      <div className="container portal-content">
+      <div className="container portal-content legacy-content">
         <h1>Frequently Asked Questions</h1>
         {faqItems.map((item) => (
           <section key={item.question} className="faq-item">

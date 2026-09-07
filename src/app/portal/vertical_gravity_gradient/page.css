@@ -1,0 +1,17 @@
+.example-screenshot-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 24px;
+  margin: 20px 0;
+}
+
+.example-screenshot-row img {
+  width: 100%;
+  max-width: 420px;
+}
+
+.example-screenshot-caption {
+  flex: 1 1 240px;
+  margin: 0;
+}
