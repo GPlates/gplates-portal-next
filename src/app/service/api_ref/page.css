@@ -1,0 +1,31 @@
+.api-endpoint {
+  margin: 0 0 40px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid #ddd;
+}
+
+.api-endpoint:last-child {
+  border-bottom: none;
+}
+
+.api-endpoint h3 {
+  text-align: center;
+}
+
+.api-endpoint dt {
+  font-weight: 700;
+  margin-top: 12px;
+}
+
+.api-endpoint dd {
+  margin: 0 0 0 20px;
+}
+
+.api-endpoint pre {
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 12px 16px;
+  overflow-x: auto;
+  font-size: 14px;
+}
