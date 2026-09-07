@@ -1,0 +1,42 @@
+.faq-page h1 {
+  margin: 0 0 28px;
+  color: #ce1126;
+  font-size: 36px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.faq-item {
+  margin: 0 0 28px;
+}
+
+.faq-page h2 {
+  margin: 0 0 10px;
+  color: #333;
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.faq-page p,
+.faq-page li {
+  font-size: 16px;
+  line-height: 1.8;
+}
+
+.faq-page p {
+  margin: 0;
+}
+
+.faq-page ul {
+  margin: 12px 0 0;
+  padding-left: 24px;
+}
+
+.faq-page a {
+  color: #0a6bb8;
+}
+
+.faq-links {
+  margin-bottom: 28px !important;
+}

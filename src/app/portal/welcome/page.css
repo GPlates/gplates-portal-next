@@ -10,48 +10,8 @@
   margin: 0 auto;
 }
 
-.welcome-topbar {
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  background: #24344d;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
-}
-
-.welcome-topbar-inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  min-height: 56px;
-  gap: 20px;
-}
-
-.welcome-brand {
-  display: inline-flex;
-  align-items: center;
-}
-
-.welcome-brand img {
-  height: 35px;
-  width: auto;
-  display: block;
-}
-
-.welcome-cta-link {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 16px;
-  border-radius: 4px;
-  background: #5cb85c;
-  color: #fff;
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1.2;
-}
-
 .welcome-content {
-  padding: 28px 0 72px;
+  padding: 0 0 72px;
 }
 
 .welcome-hero {
@@ -232,16 +192,6 @@ welcome-section,
   .featurette-copy,
   .featurette-image {
     flex-basis: auto;
-    width: 100%;
-  }
-
-  .welcome-topbar-inner {
-    flex-wrap: wrap;
-    justify-content: center;
-    padding: 10px 0;
-  }
-
-  .welcome-cta-link {
     width: 100%;
   }
 

@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { SiteFooter } from '../../../components/SiteFooter';
+import { SiteHeader } from '../../../components/SiteHeader';
 import './page.css';
 
 const introBullets = [
@@ -31,15 +33,8 @@ export default function WelcomePage() {
   }, []);
 
   return (
-    <main className="welcome-page">
-      <header className="welcome-topbar">
-        <div className="container welcome-topbar-inner">
-          <a href="/" className="welcome-brand" aria-label="GPlates Portal home">
-            <img src="/img/gplates-portal-banner.png" alt="GPlates Portal" />
-          </a>
-          
-        </div>
-      </header>
+    <main className="welcome-page portal-page">
+      <SiteHeader />
 
       <div className="container welcome-content">
         <section className="welcome-hero">
@@ -190,6 +185,7 @@ export default function WelcomePage() {
           </ul>
         </section>
       </div>
+      <SiteFooter />
     </main>
   );
 }

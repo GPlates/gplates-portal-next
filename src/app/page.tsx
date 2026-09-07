@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { SiteFooter } from '../components/SiteFooter';
+import { SiteHeader } from '../components/SiteHeader';
 
 const apps = [
   { name: 'Vertical Gravity Gradient Grid', url: '/cesium/', iconUrl: '/img/vgg-icon.png', infoUrl: '/portal/vertical_gravity_gradient' },
@@ -100,94 +101,9 @@ const getAppTitleClass = (name: string) => {
 };
 
 export default function HomePage() {
-  const [isHeaderVisible, setIsHeaderVisible] = useState(true);
-  const [isFooterVisible, setIsFooterVisible] = useState(false);
-
-  useEffect(() => {
-    let lastScrollY = window.scrollY;
-
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      const scrollingDown = currentScrollY > lastScrollY;
-      const windowHeight = window.innerHeight;
-      const documentHeight = document.documentElement.scrollHeight;
-      const nearBottom = currentScrollY + windowHeight >= documentHeight - 10;
-
-      if (currentScrollY <= 40) {
-        setIsHeaderVisible(true);
-      } else if (scrollingDown && currentScrollY > 80) {
-        setIsHeaderVisible(false);
-      }
-
-      if (nearBottom) {
-        setIsFooterVisible(true);
-      } else if (!scrollingDown) {
-        setIsFooterVisible(false);
-      }
-
-      lastScrollY = currentScrollY;
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
   return (
     <main className="page-shell">
-      <header className={`legacy-header ${isHeaderVisible ? 'header-visible' : 'header-hidden'}`}>
-        <nav className="legacy-navbar" aria-label="Main navigation">
-          <div className="container legacy-nav-inner">
-            <div className="brand-wrap">
-              <a href="/" className="brand-link" aria-label="GPlates Portal home">
-                <img src="/img/gplates-portal-banner.png" alt="GPlates Portal" />
-              </a>
-            </div>
-
-            <div className="nav-menu-wrap">
-              <div className="nav-menu-group">
-                <div className="nav-dropdown">
-                  <button type="button" className="nav-toggle">Resources</button>
-                  <div className="nav-panel">
-                    <a href="https://www.earthbyte.org/category/resources/">EarthByte Resources</a>
-                    <a href="https://www.earthbyte.org/category/gplates/">GPlates Resources</a>
-                    <a href="https://www.earthbyte.org/gplates-2-2-software-and-data-sets/">GPlates Sample Data</a>
-                  </div>
-                </div>
-
-                <div className="nav-dropdown">
-                  <button type="button" className="nav-toggle">Goto</button>
-                  <div className="nav-panel">
-                    <a href="https://www.gplates.org">www.GPlates.org</a>
-                    <a href="https://www.earthbyte.org">www.EarthByte.org</a>
-                    <a href="https://discourse.gplates.org">Community Forum</a>
-                    <a href="#apps">Applications</a>
-                    <a href="#people">People</a>
-                    <a href="#sponsors-hr">Sponsors</a>
-                  </div>
-                </div>
-
-                <div className="nav-dropdown">
-                  <button type="button" className="nav-toggle">About Us</button>
-                  <div className="nav-panel">
-                    <a href="https://www.earthbyte.org/people/">Our Team</a>
-                    <a href="https://www.earthbyte.org/contact-us-3/">Contact</a>
-                    <a href="/portal/faq">FAQ</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="nav-auth">
-              <a href="/ac/login" className="auth-link">
-                <span className="glyphicon">&#x2709;</span> Log In
-              </a>
-              <a href="/ac/signup" className="auth-link signup-link">
-                <span className="glyphicon">&#x1F464;</span> Sign Up
-              </a>
-            </div>
-          </div>
-        </nav>
-      </header>
+      <SiteHeader />
 
       <section className="hero">
         <div className="hero-background" />
@@ -325,13 +241,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <footer className={`legacy-footer ${isFooterVisible ? 'footer-visible' : 'footer-hidden'}`}>
-        <div className="container legacy-footer-inner">
-          <span className="copyright-long">Copyright &copy; 2015-2022 The University of Sydney. All rights reserved.</span>
-          <a href="http://sydney.edu.au/disclaimer.html">Disclaimer</a>
-          <a href="http://sydney.edu.au/privacy-policy.html">Privacy</a>
-        </div>
-      </footer>
+      <SiteFooter />
 
     </main>
   );
