@@ -4,3 +4,7 @@ out
 npm-debug.log*
 .DS_Store
 .env*
+/public/cesium
+*.tsbuildinfo
+AGENTS.md
+CLAUDE.md

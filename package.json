@@ -2,12 +2,15 @@
   "name": "gplates-portal-next",
   "private": true,
   "scripts": {
+    "predev": "node scripts/copy-cesium-assets.mjs",
     "dev": "next dev",
+    "prebuild": "node scripts/copy-cesium-assets.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
+    "cesium": "1.95.0",
     "next": "latest",
     "react": "latest",
     "react-dom": "latest"
