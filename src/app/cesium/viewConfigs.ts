@@ -31,12 +31,25 @@ export type TerrainCfg = {
   default?: boolean;
 };
 
+/**
+ * A paleo-age range, for rasters whose tiles are cut per reconstruction time
+ * (the old ReconstructionView). Times are in Ma, counting back from the
+ * present, so `start` is the oldest frame and `end` the youngest.
+ */
+export type TimeCfg = {
+  start: number;
+  end: number;
+  step: number;
+};
+
 export type ViewCfg = {
   title: string;
   /** the portal page or paper describing this dataset -- the old "About" button */
   aboutUrl: string;
   rasters: Record<string, RasterCfg>;
   terrains: Record<string, TerrainCfg>;
+  /** present only on reconstruction views, which get a time slider */
+  time?: TimeCfg;
   /**
    * Vector overlays the old view drew via GeoJsonLayer. Not rendered yet --
    * recorded here so the config stays faithful and the layers can be switched
@@ -82,6 +95,69 @@ export const VIEWS = {
         default: true,
       },
     },
+  },
+  'VGG-R': {
+    title: 'Gravity Grid Reconstructions',
+    aboutUrl: '/portal/vertical_gravity_gradient_reconstruction',
+    time: { start: 200, end: 0, step: 2 },
+    rasters: {
+      VGG: {
+        displayName: 'Vertical Gravity Gradient',
+        maxLevel: 3,
+        colorBar: null,
+        default: true,
+      },
+    },
+    terrains: {},
+    pendingGeoJsonLayers: ['emag2_coastlines_polylines'],
+  },
+  EMAG2: {
+    title: 'Magnetic Anomaly Reconstruction',
+    aboutUrl: '/portal/emag2_reconstruction',
+    time: { start: 200, end: 0, step: 2 },
+    rasters: {
+      EMAG2: {
+        displayName: 'EMAG2',
+        maxLevel: 3,
+        colorBar: null,
+        credit: 'EarthByte EMAG2',
+        default: true,
+      },
+    },
+    terrains: {},
+    pendingGeoJsonLayers: ['emag2_coastlines_polylines'],
+  },
+  GeologyR: {
+    title: 'Geology Reconstruction',
+    aboutUrl: '/portal/geology',
+    time: { start: 200, end: 0, step: 2 },
+    rasters: {
+      'geology-r': {
+        displayName: 'Geology',
+        maxLevel: 3,
+        colorBar: null,
+        credit: 'Geology',
+        default: true,
+      },
+    },
+    terrains: {},
+  },
+  redblue: {
+    // the old config had start/end the wrong way round (start: 0, end: 118),
+    // which left its next/play controls dead; the tile pyramid runs 0..118 Ma
+    title: 'Red and Blue',
+    aboutUrl: '/portal/emag2_reconstruction',
+    time: { start: 118, end: 0, step: 2 },
+    rasters: {
+      redblue: {
+        displayName: 'Red and Blue',
+        maxLevel: 3,
+        colorBar: null,
+        credit: 'EarthByte Group',
+        default: true,
+      },
+    },
+    terrains: {},
   },
   EMAG2_V2: {
     title: 'EMAG2 Magnetic Anomaly',
@@ -360,6 +436,13 @@ export type ViewName = keyof typeof VIEWS;
 
 /** the old cesium/views.py defaulted to VGG-T when no ?view= was given */
 export const DEFAULT_VIEW: ViewName = 'VGG-T';
+
+/**
+ * VIEWS keeps its literal type (so ViewName stays a union), which means indexing
+ * it directly hides optional members like `time` on views that omit them --
+ * always reach a view through here.
+ */
+export const getView = (name: ViewName): ViewCfg => VIEWS[name];
 
 export const isViewName = (name: string): name is ViewName =>
   Object.prototype.hasOwnProperty.call(VIEWS, name);

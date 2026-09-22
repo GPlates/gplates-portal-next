@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import type * as CesiumNS from 'cesium';
 import { GPlatesImageryProvider } from '../../lib/cesium/GPlatesImageryProvider';
 import { GPlatesTerrainProvider } from '../../lib/cesium/GPlatesTerrainProvider';
+import { TimeSlider } from './TimeSlider';
 import {
   CREDIT,
   TERRAIN_NONE,
@@ -14,6 +15,7 @@ import {
   defaultHeightScale,
   defaultRasterName,
   defaultTerrainName,
+  getView,
 } from './viewConfigs';
 
 const PROJECTIONS = {
@@ -33,15 +35,23 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
   const [projection, setProjection] = useState<Projection>('3D');
 
   const [viewName, setViewName] = useState<ViewName>(initialView);
-  const [rasterName, setRasterName] = useState(() => defaultRasterName(VIEWS[initialView]));
-  const [terrainName, setTerrainName] = useState(() => defaultTerrainName(VIEWS[initialView]));
+  const [rasterName, setRasterName] = useState(() => defaultRasterName(getView(initialView)));
+  const [terrainName, setTerrainName] = useState(() => defaultTerrainName(getView(initialView)));
   const [heightScale, setHeightScale] = useState(() =>
-    defaultHeightScale(VIEWS[initialView], defaultTerrainName(VIEWS[initialView])),
+    defaultHeightScale(getView(initialView), defaultTerrainName(getView(initialView))),
   );
+  // paleo-age in Ma; only meaningful for views that declare a time range
+  const [time, setTime] = useState(() => getView(initialView).time?.start ?? 0);
 
-  const view: ViewCfg = VIEWS[viewName];
+  // the imagery layer currently on screen, plus the ones waiting to be dropped
+  // once their replacement has finished loading (see swapImagery)
+  const currentLayerRef = useRef<CesiumNS.ImageryLayer | null>(null);
+  const staleLayersRef = useRef<CesiumNS.ImageryLayer[]>([]);
+
+  const view: ViewCfg = getView(viewName);
   const raster = view.rasters[rasterName];
   const terrain = terrainName === TERRAIN_NONE ? null : view.terrains[terrainName];
+  const hasTerrains = Object.keys(view.terrains).length > 0;
 
   // create the viewer once
   useEffect(() => {
@@ -65,7 +75,17 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
         homeButton: false,
         navigationHelpButton: false,
         sceneModePicker: false,
-        imageryProvider: createImageryProvider(rasterName, raster),
+        imageryProvider: createImageryProvider(rasterName, raster, view.time ? time : undefined),
+      });
+      currentLayerRef.current = viewer.imageryLayers.get(0);
+
+      // drop superseded frames only once the globe has caught up, so stepping
+      // through a reconstruction doesn't flash the empty globe between frames
+      viewer.scene.globe.tileLoadProgressEvent.addEventListener((queued: number) => {
+        if (queued > 0 || staleLayersRef.current.length === 0) return;
+        for (const layer of staleLayersRef.current.splice(0)) {
+          viewer!.imageryLayers.remove(layer, true);
+        }
       });
       viewer.scene.camera.setView({
         destination: Cesium.Cartesian3.fromDegrees(135.0, -25.0, 18000000),
@@ -82,6 +102,10 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
       // skyAtmosphere -- without this the globe surface still gets a hazy
       // atmospheric tint near the grazing limb.
       viewer.scene.globe.showGroundAtmosphere = false;
+      // where the raster doesn't reach -- most of the globe on an old
+      // reconstruction frame -- the old app showed a dark grey base layer
+      // rather than Cesium's default blue
+      viewer.scene.globe.baseColor = Cesium.Color.DARKGREY;
 
       applyTerrain(viewer, Cesium, view, terrainName, heightScale);
 
@@ -119,15 +143,25 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // swap the imagery layer whenever the view or raster selection changes
+  // swap the imagery layer whenever the view, raster or reconstruction time changes
   useEffect(() => {
     const viewer = viewerRef.current;
     if (!viewer || !raster) return;
-    viewer.imageryLayers.removeAll();
-    viewer.imageryLayers.addImageryProvider(
-      createImageryProvider(rasterName, raster),
+
+    const next = viewer.imageryLayers.addImageryProvider(
+      createImageryProvider(rasterName, raster, view.time ? time : undefined),
     );
-  }, [rasterName, raster]);
+    if (currentLayerRef.current) {
+      staleLayersRef.current.push(currentLayerRef.current);
+    }
+    currentLayerRef.current = next;
+
+    // scrubbing the slider can outrun tile loading; don't let superseded
+    // frames pile up while waiting for the globe to settle
+    while (staleLayersRef.current.length > 3) {
+      viewer.imageryLayers.remove(staleLayersRef.current.shift()!, true);
+    }
+  }, [rasterName, raster, view.time, time]);
 
   // swap the terrain provider whenever the view, terrain or height scale changes
   useEffect(() => {
@@ -143,12 +177,13 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
   // switching view resets the raster/terrain selections to that view's defaults,
   // the way the old app built a whole new RasterTerrainView
   const changeView = (next: ViewName) => {
-    const cfg = VIEWS[next];
+    const cfg = getView(next);
     const nextTerrain = defaultTerrainName(cfg);
     setViewName(next);
     setRasterName(defaultRasterName(cfg));
     setTerrainName(nextTerrain);
     setHeightScale(defaultHeightScale(cfg, nextTerrain));
+    setTime(cfg.time?.start ?? 0);
     // keep the URL shareable without remounting the viewer, which a router
     // navigation would do
     window.history.replaceState(null, '', `/cesium/?view=${encodeURIComponent(next)}`);
@@ -234,19 +269,23 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
             ))}
           </select>
 
-          <label htmlFor="select-terrain">Terrain</label>
-          <select
-            id="select-terrain"
-            value={terrainName}
-            onChange={(e) => changeTerrain(e.target.value)}
-          >
-            <option value={TERRAIN_NONE}>{TERRAIN_NONE}</option>
-            {Object.entries(view.terrains).map(([key, cfg]) => (
-              <option key={key} value={key}>
-                {cfg.displayName}
-              </option>
-            ))}
-          </select>
+          {hasTerrains && (
+            <>
+              <label htmlFor="select-terrain">Terrain</label>
+              <select
+                id="select-terrain"
+                value={terrainName}
+                onChange={(e) => changeTerrain(e.target.value)}
+              >
+                <option value={TERRAIN_NONE}>{TERRAIN_NONE}</option>
+                {Object.entries(view.terrains).map(([key, cfg]) => (
+                  <option key={key} value={key}>
+                    {cfg.displayName}
+                  </option>
+                ))}
+              </select>
+            </>
+          )}
 
           {terrain && (
             <>
@@ -275,17 +314,31 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
         </div>
       )}
 
+      {view.time && (
+        <TimeSlider
+          cfg={view.time}
+          time={time}
+          onChange={setTime}
+          canAdvance={() => viewerRef.current?.scene.globe.tilesLoaded ?? false}
+        />
+      )}
+
       <span ref={coordsRef} className="cesium-view-coordinates" />
     </div>
   );
 }
 
-function createImageryProvider(rasterName: string, raster: RasterCfg) {
+function createImageryProvider(
+  rasterName: string,
+  raster: RasterCfg,
+  time: number | undefined,
+) {
   return new GPlatesImageryProvider({
     name: rasterName,
     format: 'png',
     maxLevel: raster.maxLevel,
     creditText: raster.credit ?? CREDIT,
+    time,
   }) as unknown as CesiumNS.ImageryProvider;
 }
 

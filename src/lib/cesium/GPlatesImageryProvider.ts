@@ -3,7 +3,8 @@ import { TILE_SERVER_URL } from './tileServer';
 
 /**
  * Port of the old gplates-portal GPlatesImageryProvider (static/js/cesium/GPlatesImageryProvider.js).
- * Tiles are pre-cut PNG/JPG pyramids on disk as raster_tiles/{name}/{level}/{x}/{y}.{fmt}.
+ * Tiles are pre-cut PNG/JPG pyramids on disk as raster_tiles/{name}/{level}/{x}/{y}.{fmt},
+ * or raster_tiles/{name}/{time}/{level}/{x}/{y}.{fmt} for paleo-reconstruction rasters.
  * The old app served them through a Django view (/get_tile/); here requestImage fetches
  * the tile file directly from the static tile server instead.
  */
@@ -12,6 +13,8 @@ export type GPlatesImageryProviderOptions = {
   format?: string;
   maxLevel?: number;
   creditText?: string;
+  /** paleo-age in Ma; omitted for present-day rasters, which have no time dimension */
+  time?: number;
 };
 
 /**
@@ -25,6 +28,7 @@ export class GPlatesImageryProvider {
   private readonly _name: string;
   private readonly _format: string;
   private readonly _maxLevel: number;
+  private readonly _time?: number;
   private readonly _tilingScheme: Cesium.GeographicTilingScheme;
   private readonly _errorEvent: Cesium.Event;
   private readonly _credit: Cesium.Credit;
@@ -33,6 +37,7 @@ export class GPlatesImageryProvider {
     this._name = options.name;
     this._format = options.format || 'png';
     this._maxLevel = options.maxLevel ?? 4;
+    this._time = options.time;
     this._tilingScheme = new Cesium.GeographicTilingScheme({});
     this._errorEvent = new Cesium.Event();
     this._credit = new Cesium.Credit(options.creditText || 'EarthByte Group');
@@ -93,7 +98,11 @@ export class GPlatesImageryProvider {
    */
   requestImage(x: number, y: number, level: number) {
     const flippedY = Math.abs(y - (Math.pow(2, level) - 1));
-    const url = `${TILE_SERVER_URL}/raster_tiles/${this._name}/${level}/${x}/${flippedY}.${this._format}`;
+    const path =
+      this._time === undefined
+        ? `${this._name}/${level}/${x}/${flippedY}`
+        : `${this._name}/${this._time}/${level}/${x}/${flippedY}`;
+    const url = `${TILE_SERVER_URL}/raster_tiles/${path}.${this._format}`;
     return Cesium.ImageryProvider.loadImage(this as unknown as Cesium.ImageryProvider, url);
   }
 }
