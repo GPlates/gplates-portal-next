@@ -299,6 +299,21 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
         </div>
 
         <div className="cesium-view-picker">
+          <div className="cesium-view-switcher">
+            <label htmlFor="select-view">View</label>
+            <select
+              id="select-view"
+              value={viewName}
+              onChange={(e) => changeView(e.target.value as ViewName)}
+            >
+              {viewNamesInGroup(group).map((key) => (
+                <option key={key} value={key}>
+                  {getView(key).title}
+                </option>
+              ))}
+            </select>
+          </div>
+
           <div className="cesium-view-groups">
             {VIEW_GROUPS.map((name) => (
               <label key={name} htmlFor={`group-${name}`}>
@@ -313,21 +328,6 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
                 {name}
               </label>
             ))}
-          </div>
-
-          <div className="cesium-view-switcher">
-            <label htmlFor="select-view">View</label>
-            <select
-              id="select-view"
-              value={viewName}
-              onChange={(e) => changeView(e.target.value as ViewName)}
-            >
-              {viewNamesInGroup(group).map((key) => (
-                <option key={key} value={key}>
-                  {getView(key).title}
-                </option>
-              ))}
-            </select>
           </div>
         </div>
       </div>
