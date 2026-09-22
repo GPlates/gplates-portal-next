@@ -7,6 +7,8 @@
  * the tile server.
  */
 
+import { LayerColor } from '../../lib/cesium/geoJson';
+
 export const CREDIT = 'EarthByte Group and Scripps Institution of Oceanography';
 
 export const TERRAIN_NONE = 'None';
@@ -42,6 +44,12 @@ export type TimeCfg = {
   step: number;
 };
 
+export type GeoJsonLayerCfg = {
+  name: string;
+  /** rgba 0..1; defaults to the old GeoJsonLayer.js yellow */
+  color?: LayerColor;
+};
+
 export type ViewCfg = {
   title: string;
   /** the portal page or paper describing this dataset -- the old "About" button */
@@ -50,12 +58,8 @@ export type ViewCfg = {
   terrains: Record<string, TerrainCfg>;
   /** present only on reconstruction views, which get a time slider */
   time?: TimeCfg;
-  /**
-   * Vector overlays the old view drew via GeoJsonLayer. Not rendered yet --
-   * recorded here so the config stays faithful and the layers can be switched
-   * on once GeoJSON support lands.
-   */
-  pendingGeoJsonLayers?: string[];
+  /** vector overlays, drawn from GeoJson/{name}/{time}.geojson.gz */
+  geoJsonLayers?: GeoJsonLayerCfg[];
 };
 
 export const VIEWS = {
@@ -109,7 +113,7 @@ export const VIEWS = {
       },
     },
     terrains: {},
-    pendingGeoJsonLayers: ['emag2_coastlines_polylines'],
+    geoJsonLayers: [{ name: 'emag2_coastlines_polylines' }],
   },
   EMAG2: {
     title: 'Magnetic Anomaly Reconstruction',
@@ -125,7 +129,7 @@ export const VIEWS = {
       },
     },
     terrains: {},
-    pendingGeoJsonLayers: ['emag2_coastlines_polylines'],
+    geoJsonLayers: [{ name: 'emag2_coastlines_polylines' }],
   },
   GeologyR: {
     title: 'Geology Reconstruction',
@@ -210,7 +214,7 @@ export const VIEWS = {
         default: true,
       },
     },
-    pendingGeoJsonLayers: ['earthbyte_coastlines_polyline'],
+    geoJsonLayers: [{ name: 'earthbyte_coastlines_polyline' }],
   },
   WGM2012: {
     title: 'World Gravity Map 2012',
@@ -244,7 +248,7 @@ export const VIEWS = {
         heightScales: [10, 20, 30, 40, 50, 100],
       },
     },
-    pendingGeoJsonLayers: ['earthbyte_coastlines_polyline'],
+    geoJsonLayers: [{ name: 'earthbyte_coastlines_polyline' }],
   },
   spreading_parameters: {
     title: 'Seafloor Spreading Parameters',
@@ -334,7 +338,8 @@ export const VIEWS = {
         default: true,
       },
     },
-    pendingGeoJsonLayers: ['earthbyte_coastlines_polyline'],
+    // this view drew its coastlines black rather than the default yellow
+    geoJsonLayers: [{ name: 'earthbyte_coastlines_polyline', color: [0, 0, 0, 1] }],
   },
   abyssal_hills: {
     title: 'Abyssal Hills',

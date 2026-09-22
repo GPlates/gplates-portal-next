@@ -5,6 +5,7 @@ import type * as CesiumNS from 'cesium';
 import { GPlatesImageryProvider } from '../../lib/cesium/GPlatesImageryProvider';
 import { GPlatesTerrainProvider } from '../../lib/cesium/GPlatesTerrainProvider';
 import { TimeSlider } from './TimeSlider';
+import { DEFAULT_LAYER_COLOR, loadGeoJsonLines } from '../../lib/cesium/geoJson';
 import {
   CREDIT,
   TERRAIN_NONE,
@@ -33,6 +34,9 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
   const mouseHandlerRef = useRef<CesiumNS.ScreenSpaceEventHandler | null>(null);
 
   const [projection, setProjection] = useState<Projection>('3D');
+  // the viewer is built asynchronously; the effects below key off this so they
+  // don't silently no-op on their first run, before it exists
+  const [viewerReady, setViewerReady] = useState(false);
 
   const [viewName, setViewName] = useState<ViewName>(initialView);
   const [rasterName, setRasterName] = useState(() => defaultRasterName(getView(initialView)));
@@ -47,6 +51,10 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
   // once their replacement has finished loading (see swapImagery)
   const currentLayerRef = useRef<CesiumNS.ImageryLayer | null>(null);
   const staleLayersRef = useRef<CesiumNS.ImageryLayer[]>([]);
+  // vector overlays currently on screen, and a token identifying the newest
+  // load so slower earlier ones can't overwrite it
+  const overlaysRef = useRef<CesiumNS.PolylineCollection[]>([]);
+  const overlayLoadRef = useRef(0);
 
   const view: ViewCfg = getView(viewName);
   const raster = view.rasters[rasterName];
@@ -75,9 +83,11 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
         homeButton: false,
         navigationHelpButton: false,
         sceneModePicker: false,
-        imageryProvider: createImageryProvider(rasterName, raster, view.time ? time : undefined),
+        // documented escape hatch for "no base layer"; the imagery effect below
+        // owns the raster layer, so the viewer must not add one of its own
+        // (without this it falls back to Cesium ion's world imagery)
+        imageryProvider: false as unknown as CesiumNS.ImageryProvider,
       });
-      currentLayerRef.current = viewer.imageryLayers.get(0);
 
       // drop superseded frames only once the globe has caught up, so stepping
       // through a reconstruction doesn't flash the empty globe between frames
@@ -107,8 +117,6 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
       // rather than Cesium's default blue
       viewer.scene.globe.baseColor = Cesium.Color.DARKGREY;
 
-      applyTerrain(viewer, Cesium, view, terrainName, heightScale);
-
       // lon/lat readout under the cursor. Written straight to the DOM rather
       // than through state: this fires on every mouse move, and re-rendering
       // the whole panel at pointer frequency would compete with the render loop.
@@ -129,6 +137,7 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
       mouseHandlerRef.current = handler;
 
       viewerRef.current = viewer;
+      setViewerReady(true);
     })();
 
     return () => {
@@ -136,6 +145,10 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
       viewerRef.current = null;
       mouseHandlerRef.current?.destroy();
       mouseHandlerRef.current = null;
+      overlaysRef.current = [];
+      currentLayerRef.current = null;
+      staleLayersRef.current = [];
+      setViewerReady(false);
       viewer?.destroy();
     };
     // the viewer is only created once; view/raster/terrain/height-scale changes
@@ -161,7 +174,7 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
     while (staleLayersRef.current.length > 3) {
       viewer.imageryLayers.remove(staleLayersRef.current.shift()!, true);
     }
-  }, [rasterName, raster, view.time, time]);
+  }, [viewerReady, rasterName, raster, view.time, time]);
 
   // swap the terrain provider whenever the view, terrain or height scale changes
   useEffect(() => {
@@ -172,7 +185,50 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
         applyTerrain(viewer, Cesium, view, terrainName, heightScale);
       }
     });
-  }, [view, terrainName, heightScale]);
+  }, [viewerReady, view, terrainName, heightScale]);
+
+  // redraw the vector overlays whenever the view or reconstruction time changes
+  useEffect(() => {
+    const viewer = viewerRef.current;
+    if (!viewer) return;
+
+    const layers = view.geoJsonLayers ?? [];
+    const token = ++overlayLoadRef.current;
+
+    const replaceOverlays = (next: CesiumNS.PolylineCollection[]) => {
+      // a newer load already landed, so this one is stale
+      if (overlayLoadRef.current !== token || viewerRef.current !== viewer) {
+        next.forEach((c) => c.destroy());
+        return;
+      }
+      for (const old of overlaysRef.current) {
+        viewer.scene.primitives.remove(old);
+      }
+      overlaysRef.current = next;
+      next.forEach((c) => viewer.scene.primitives.add(c));
+    };
+
+    if (layers.length === 0) {
+      replaceOverlays([]);
+      return;
+    }
+
+    import('cesium')
+      .then((Cesium) =>
+        Promise.all(
+          layers.map((layer) =>
+            loadGeoJsonLines(
+              Cesium,
+              layer.name,
+              view.time ? time : 0,
+              layer.color ?? DEFAULT_LAYER_COLOR,
+            ),
+          ),
+        ),
+      )
+      .then(replaceOverlays)
+      .catch((err) => console.error('failed to load vector overlay', err));
+  }, [viewerReady, view, time]);
 
   // switching view resets the raster/terrain selections to that view's defaults,
   // the way the old app built a whole new RasterTerrainView

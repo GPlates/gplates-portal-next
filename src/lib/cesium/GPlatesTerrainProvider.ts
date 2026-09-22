@@ -1,5 +1,6 @@
 import * as Cesium from 'cesium';
 import { TILE_SERVER_URL } from './tileServer';
+import { gunzip } from './gunzip';
 
 /**
  * Port of the old gplates-portal GPlatesTerrainProvider (static/js/cesium/GPlatesTerrainProvider.js).
@@ -103,10 +104,7 @@ export class GPlatesTerrainProvider {
       return undefined;
     }
 
-    // .terrain files on disk are gzip-compressed (see tools/CutTerrainTiles.py in
-    // gplates-portal.git). The old Django view read them as-is and set
-    // "Content-Encoding: gzip" so the browser decompressed them transparently;
-    // a plain static/WebDAV file server won't do that, so unzip here instead.
+    // written by tools/CutTerrainTiles.py in gplates-portal.git via gzip.open
     const buffer = await gunzip(compressed);
 
     const heightBuffer = new Int16Array(buffer, 0, 65 * 65);
@@ -130,9 +128,4 @@ export class GPlatesTerrainProvider {
   getTileDataAvailable(_x: number, _y: number, level: number): boolean {
     return level <= this._maxLevel;
   }
-}
-
-async function gunzip(compressed: ArrayBuffer): Promise<ArrayBuffer> {
-  const stream = new Blob([compressed]).stream().pipeThrough(new DecompressionStream('gzip'));
-  return await new Response(stream).arrayBuffer();
 }
