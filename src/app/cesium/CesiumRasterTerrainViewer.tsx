@@ -298,35 +298,37 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
           ))}
         </div>
 
-        <div className="cesium-view-groups">
-          {VIEW_GROUPS.map((name) => (
-            <label key={name} htmlFor={`group-${name}`}>
-              <input
-                type="radio"
-                id={`group-${name}`}
-                name="view-group"
-                value={name}
-                checked={group === name}
-                onChange={() => changeGroup(name)}
-              />
-              {name}
-            </label>
-          ))}
-        </div>
-
-        <div className="cesium-view-switcher">
-          <label htmlFor="select-view">View</label>
-          <select
-            id="select-view"
-            value={viewName}
-            onChange={(e) => changeView(e.target.value as ViewName)}
-          >
-            {viewNamesInGroup(group).map((key) => (
-              <option key={key} value={key}>
-                {getView(key).title}
-              </option>
+        <div className="cesium-view-picker">
+          <div className="cesium-view-groups">
+            {VIEW_GROUPS.map((name) => (
+              <label key={name} htmlFor={`group-${name}`}>
+                <input
+                  type="radio"
+                  id={`group-${name}`}
+                  name="view-group"
+                  value={name}
+                  checked={group === name}
+                  onChange={() => changeGroup(name)}
+                />
+                {name}
+              </label>
             ))}
-          </select>
+          </div>
+
+          <div className="cesium-view-switcher">
+            <label htmlFor="select-view">View</label>
+            <select
+              id="select-view"
+              value={viewName}
+              onChange={(e) => changeView(e.target.value as ViewName)}
+            >
+              {viewNamesInGroup(group).map((key) => (
+                <option key={key} value={key}>
+                  {getView(key).title}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
 

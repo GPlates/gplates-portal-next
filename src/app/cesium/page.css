@@ -15,6 +15,8 @@
 
 /* one surface treatment shared by every control overlaying the globe */
 .cesium-view-panel,
+.cesium-view-picker,
+.cesium-view-projections,
 .cesium-view-about {
   background-color: rgba(24, 26, 32, 0.82);
   border: 1px solid rgba(255, 255, 255, 0.14);
@@ -23,12 +25,18 @@
   color: #c9ccd6;
 }
 
-.cesium-view-switcher,
-.cesium-view-coordinates,
-.cesium-view-projections,
-.cesium-view-groups {
+.cesium-view-coordinates {
   backdrop-filter: blur(6px);
   color: #c9ccd6;
+}
+
+/* the group switch and the view list are one control: which group you're in
+   decides what the list contains, so they read as a single card */
+.cesium-view-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 6px;
 }
 
 .cesium-view-topleft,
@@ -81,6 +89,18 @@
   padding: 2px;
 }
 
+.cesium-view-groups {
+  background-color: rgba(255, 255, 255, 0.06);
+  border-radius: 5px;
+}
+
+/* both rows of the picker span its full width, so the card reads as one block
+   rather than two ragged lines */
+.cesium-view-groups label {
+  flex: 1;
+  text-align: center;
+}
+
 .cesium-view-projections label,
 .cesium-view-groups label {
   padding: 4px 10px;
@@ -118,12 +138,13 @@
 
 .cesium-view-switcher {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   align-items: center;
-  padding: 4px 6px 4px 10px;
+  padding: 0 4px 2px;
 }
 
 .cesium-view-switcher select {
+  flex: 1;
   min-width: 190px;
 }
 
