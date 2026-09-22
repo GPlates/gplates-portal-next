@@ -197,6 +197,17 @@
   background-color: rgba(255, 255, 255, 0.16);
 }
 
+/* the primary control of the group, so give it a little more weight than the
+   seek buttons either side of it */
+.cesium-view-timeplay {
+  background-color: rgba(255, 255, 255, 0.16);
+  margin: 0 2px;
+}
+
+.cesium-view-timeplay:hover {
+  background-color: rgba(255, 255, 255, 0.26);
+}
+
 .cesium-view-timeslider input[type='range'] {
   width: 320px;
   accent-color: #607dbe;

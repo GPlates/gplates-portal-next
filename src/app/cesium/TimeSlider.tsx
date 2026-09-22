@@ -70,24 +70,25 @@ export function TimeSlider({
 
   return (
     <div className="cesium-view-timeslider">
-      <button type="button" title="Oldest" onClick={() => step(cfg.start - time)}>
-        ⏮
+      <button type="button" title="Jump to oldest" onClick={() => step(cfg.start - time)}>
+        {'\u23EE\uFE0E'}
       </button>
-      <button type="button" title="Previous (older)" onClick={() => step(cfg.step)}>
-        ◀
+      <button type="button" title="Step back (older)" onClick={() => step(cfg.step)}>
+        {'\u23EA\uFE0E'}
       </button>
       <button
         type="button"
+        className="cesium-view-timeplay"
         title={playing ? 'Pause' : 'Play'}
         onClick={() => setPlaying((p) => !p)}
       >
-        {playing ? '⏸' : '▶'}
+        {playing ? '\u23F8\uFE0E' : '\u25B6\uFE0E'}
       </button>
-      <button type="button" title="Next (younger)" onClick={() => step(-cfg.step)}>
-        ▶
+      <button type="button" title="Step forward (younger)" onClick={() => step(-cfg.step)}>
+        {'\u23E9\uFE0E'}
       </button>
-      <button type="button" title="Present" onClick={() => step(cfg.end - time)}>
-        ⏭
+      <button type="button" title="Jump to present" onClick={() => step(cfg.end - time)}>
+        {'\u23ED\uFE0E'}
       </button>
 
       {/* the range runs oldest-on-the-left, so its value is the distance
