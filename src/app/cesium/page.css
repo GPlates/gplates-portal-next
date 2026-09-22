@@ -37,6 +37,10 @@
   flex-direction: column;
   gap: 6px;
   padding: 6px;
+  /* a select sizes itself to its widest option, so the card would otherwise
+     resize as the radios swap the list out from under it. Fixed to fit the
+     longest view title in either group. */
+  width: 280px;
 }
 
 .cesium-view-topleft,
@@ -153,7 +157,9 @@
 
 .cesium-view-switcher select {
   flex: 1;
-  min-width: 190px;
+  /* let the card's fixed width win rather than the widest option, which would
+     otherwise push the card wider than it is */
+  min-width: 0;
 }
 
 /* native selects render light-on-white, which reads as unstyled against the
