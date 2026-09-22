@@ -1,4 +1,5 @@
-import { CesiumTopo15Viewer } from './CesiumTopo15Viewer';
+import { CesiumRasterTerrainViewer } from './CesiumRasterTerrainViewer';
+import { DEFAULT_VIEW, isViewName } from './viewConfigs';
 import './page.css';
 
 // Cesium's package.json "exports" map blocks importing
@@ -12,13 +13,12 @@ export default async function CesiumPage({
   searchParams: Promise<{ view?: string }>;
 }) {
   const { view } = await searchParams;
+  const viewName = view ?? DEFAULT_VIEW;
 
-  if (view !== 'topo15') {
+  if (!isViewName(viewName)) {
     return (
-      <main className="cesium-topo15-fallback">
-        <p>
-          {view ? `The "${view}" 3D view is not available yet.` : 'No view was specified.'}
-        </p>
+      <main className="cesium-view-fallback">
+        <p>The &quot;{viewName}&quot; 3D view is not available yet.</p>
         <a href="/">Back to the portal</a>
       </main>
     );
@@ -27,7 +27,7 @@ export default async function CesiumPage({
   return (
     <>
       <link rel="stylesheet" href={CESIUM_WIDGETS_CSS} />
-      <CesiumTopo15Viewer />
+      <CesiumRasterTerrainViewer initialView={viewName} />
     </>
   );
 }

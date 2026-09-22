@@ -1,58 +1,183 @@
-.cesium-topo15-page {
+.cesium-view-page {
   position: relative;
   width: 100vw;
   height: 100vh;
   overflow: hidden;
+  /* covers the portal background image globals.css puts on <body>, which would
+     otherwise show through until the Cesium canvas first paints */
+  background: #000;
 }
 
-.cesium-topo15-container {
+.cesium-view-container {
   position: absolute;
   inset: 0;
 }
 
-.cesium-topo15-panel {
+/* one surface treatment shared by every control overlaying the globe */
+.cesium-view-panel,
+.cesium-view-about {
+  background-color: rgba(24, 26, 32, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 6px;
+  backdrop-filter: blur(6px);
+  color: #c9ccd6;
+}
+
+.cesium-view-switcher,
+.cesium-view-coordinates,
+.cesium-view-projections{
+  backdrop-filter: blur(6px);
+  color: #c9ccd6;
+}
+
+.cesium-view-topleft,
+.cesium-view-topright {
   position: absolute;
-  top: 50px;
+  top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.cesium-view-topleft {
   left: 10px;
+  align-items: flex-start;
+}
+
+.cesium-view-topright {
+  right: 10px;
+  align-items: flex-end;
+}
+
+.cesium-view-about {
+  padding: 4px 12px;
+  text-decoration: none;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+.cesium-view-about:hover {
+  background-color: rgba(255, 255, 255, 0.13);
+  color: #fff;
+}
+
+.cesium-view-panel {
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: 6px 10px;
+  gap: 5px 10px;
   align-items: center;
-  padding: 10px 14px;
-  background: rgba(38, 38, 38, 0.75);
-  color: #e8e9ef;
-  font-size: 105%;
+  padding: 8px 10px;
+}
+
+.cesium-view-panel select {
+  min-width: 190px;
+}
+
+.cesium-view-projections {
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+}
+
+.cesium-view-projections label {
+  padding: 4px 10px;
   border-radius: 4px;
+  color: #c9ccd6;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 120ms ease, color 120ms ease;
 }
 
-.cesium-topo15-panel select {
-  min-width: 200px;
+.cesium-view-projections label:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #fff;
 }
 
-.cesium-topo15-colorbar {
+.cesium-view-projections label:has(input:checked) {
+  background-color: rgba(96, 125, 190, 0.9);
+  color: #fff;
+}
+
+.cesium-view-projections label:has(input:focus-visible) {
+  outline: 2px solid #8fa8dd;
+  outline-offset: 1px;
+}
+
+.cesium-view-projections input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.cesium-view-switcher {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  padding: 4px 6px 4px 10px;
+}
+
+.cesium-view-switcher select {
+  min-width: 190px;
+}
+
+/* native selects render light-on-white, which reads as unstyled against the
+   dark control surfaces -- theme them to match */
+.cesium-view-switcher select,
+.cesium-view-panel select {
+  appearance: none;
+  padding: 4px 26px 4px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.07);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath fill='none' stroke='%23c9ccd6' stroke-width='1.6' d='M3 4.5 6 7.5 9 4.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 7px center;
+  background-size: 11px;
+  color: #e8e9ef;
+  font: inherit;
+  cursor: pointer;
+}
+
+.cesium-view-switcher select:hover,
+.cesium-view-panel select:hover {
+  background-color: rgba(255, 255, 255, 0.13);
+}
+
+/* the dropdown list itself is drawn by the OS, so it needs its own colors */
+.cesium-view-switcher option,
+.cesium-view-panel option {
+  background-color: #1b1d24;
+  color: #e8e9ef;
+}
+
+.cesium-view-colorbar {
   position: absolute;
   right: 0;
   bottom: 25px;
   width: 200px;
 }
 
-.cesium-topo15-colorbar img {
+.cesium-view-colorbar img {
   max-width: 100%;
   max-height: 100%;
 }
 
-.cesium-topo15-home {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  color: #e8e9ef;
-  background: rgba(38, 38, 38, 0.75);
-  padding: 6px 12px;
-  border-radius: 4px;
-  text-decoration: none;
+.cesium-view-coordinates {
+  position: fixed;
+  right: 5px;
+  bottom: 0px;
+  padding: 0px 7px;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
 }
 
-.cesium-topo15-fallback {
+/* the readout is blank whenever the cursor is off the globe -- don't leave an
+   empty chip sitting in the corner */
+.cesium-view-coordinates:empty {
+  display: none;
+}
+
+.cesium-view-fallback {
   display: flex;
   flex-direction: column;
   align-items: center;
