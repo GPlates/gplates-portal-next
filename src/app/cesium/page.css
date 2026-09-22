@@ -25,7 +25,8 @@
 
 .cesium-view-switcher,
 .cesium-view-coordinates,
-.cesium-view-projections{
+.cesium-view-projections,
+.cesium-view-groups {
   backdrop-filter: blur(6px);
   color: #c9ccd6;
 }
@@ -73,13 +74,15 @@
   min-width: 190px;
 }
 
-.cesium-view-projections {
+.cesium-view-projections,
+.cesium-view-groups {
   display: flex;
   gap: 2px;
   padding: 2px;
 }
 
-.cesium-view-projections label {
+.cesium-view-projections label,
+.cesium-view-groups label {
   padding: 4px 10px;
   border-radius: 4px;
   color: #c9ccd6;
@@ -88,22 +91,26 @@
   transition: background-color 120ms ease, color 120ms ease;
 }
 
-.cesium-view-projections label:hover {
+.cesium-view-projections label:hover,
+.cesium-view-groups label:hover {
   background-color: rgba(255, 255, 255, 0.08);
   color: #fff;
 }
 
-.cesium-view-projections label:has(input:checked) {
+.cesium-view-projections label:has(input:checked),
+.cesium-view-groups label:has(input:checked) {
   background-color: rgba(96, 125, 190, 0.9);
   color: #fff;
 }
 
-.cesium-view-projections label:has(input:focus-visible) {
+.cesium-view-projections label:has(input:focus-visible),
+.cesium-view-groups label:has(input:focus-visible) {
   outline: 2px solid #8fa8dd;
   outline-offset: 1px;
 }
 
-.cesium-view-projections input {
+.cesium-view-projections input,
+.cesium-view-groups input {
   position: absolute;
   opacity: 0;
   pointer-events: none;

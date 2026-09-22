@@ -9,7 +9,6 @@ import { DEFAULT_LAYER_COLOR, loadGeoJsonLines } from '../../lib/cesium/geoJson'
 import {
   CREDIT,
   TERRAIN_NONE,
-  VIEWS,
   RasterCfg,
   ViewCfg,
   ViewName,
@@ -17,6 +16,10 @@ import {
   defaultRasterName,
   defaultTerrainName,
   getView,
+  groupOf,
+  VIEW_GROUPS,
+  ViewGroup,
+  viewNamesInGroup,
 } from './viewConfigs';
 
 const PROJECTIONS = {
@@ -39,6 +42,11 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
   const [viewerReady, setViewerReady] = useState(false);
 
   const [viewName, setViewName] = useState<ViewName>(initialView);
+  const [group, setGroup] = useState<ViewGroup>(() => groupOf(getView(initialView)));
+  // so toggling groups returns to where you were rather than the first entry
+  const lastViewPerGroup = useRef<Partial<Record<ViewGroup, ViewName>>>({
+    [groupOf(getView(initialView))]: initialView,
+  });
   const [rasterName, setRasterName] = useState(() => defaultRasterName(getView(initialView)));
   const [terrainName, setTerrainName] = useState(() => defaultTerrainName(getView(initialView)));
   const [heightScale, setHeightScale] = useState(() =>
@@ -236,6 +244,7 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
     const cfg = getView(next);
     const nextTerrain = defaultTerrainName(cfg);
     setViewName(next);
+    lastViewPerGroup.current[groupOf(cfg)] = next;
     setRasterName(defaultRasterName(cfg));
     setTerrainName(nextTerrain);
     setHeightScale(defaultHeightScale(cfg, nextTerrain));
@@ -243,6 +252,11 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
     // keep the URL shareable without remounting the viewer, which a router
     // navigation would do
     window.history.replaceState(null, '', `/cesium/?view=${encodeURIComponent(next)}`);
+  };
+
+  const changeGroup = (next: ViewGroup) => {
+    setGroup(next);
+    changeView(lastViewPerGroup.current[next] ?? viewNamesInGroup(next)[0]);
   };
 
   const changeTerrain = (next: string) => {
@@ -284,6 +298,22 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
           ))}
         </div>
 
+        <div className="cesium-view-groups">
+          {VIEW_GROUPS.map((name) => (
+            <label key={name} htmlFor={`group-${name}`}>
+              <input
+                type="radio"
+                id={`group-${name}`}
+                name="view-group"
+                value={name}
+                checked={group === name}
+                onChange={() => changeGroup(name)}
+              />
+              {name}
+            </label>
+          ))}
+        </div>
+
         <div className="cesium-view-switcher">
           <label htmlFor="select-view">View</label>
           <select
@@ -291,9 +321,9 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
             value={viewName}
             onChange={(e) => changeView(e.target.value as ViewName)}
           >
-            {Object.entries(VIEWS).map(([key, cfg]) => (
+            {viewNamesInGroup(group).map((key) => (
               <option key={key} value={key}>
-                {cfg.title}
+                {getView(key).title}
               </option>
             ))}
           </select>

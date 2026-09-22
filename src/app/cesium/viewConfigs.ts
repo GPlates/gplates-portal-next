@@ -462,3 +462,18 @@ export const defaultTerrainName = (view: ViewCfg) =>
 
 export const defaultHeightScale = (view: ViewCfg, terrainName: string) =>
   terrainName === TERRAIN_NONE ? 0 : view.terrains[terrainName].defaultHeightScale;
+
+/**
+ * The two families of view, which the view picker offers one at a time. The
+ * split is derived rather than configured: having a time range is exactly what
+ * makes a view a paleo-reconstruction, so the two can't drift apart.
+ */
+export const VIEW_GROUPS = ['Present Day', 'Reconstructions'] as const;
+
+export type ViewGroup = (typeof VIEW_GROUPS)[number];
+
+export const groupOf = (view: ViewCfg): ViewGroup =>
+  view.time ? 'Reconstructions' : 'Present Day';
+
+export const viewNamesInGroup = (group: ViewGroup) =>
+  (Object.keys(VIEWS) as ViewName[]).filter((name) => groupOf(getView(name)) === group);
