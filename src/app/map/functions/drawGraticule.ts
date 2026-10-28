@@ -1,3 +1,4 @@
+// @ts-nocheck -- ported from new-paleomap-maker (non-strict TS); TODO: add types and remove
 import * as d3 from "d3";
 
 export const drawGraticule = (svgRef, projection) => {

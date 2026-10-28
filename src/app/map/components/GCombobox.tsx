@@ -1,3 +1,4 @@
+// @ts-nocheck -- ported from new-paleomap-maker (non-strict TS); TODO: add types and remove
 "use client";
 
 import React, { useEffect } from "react";

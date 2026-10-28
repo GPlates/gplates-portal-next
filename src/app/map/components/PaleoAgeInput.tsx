@@ -1,3 +1,4 @@
+// @ts-nocheck -- ported from new-paleomap-maker (non-strict TS); TODO: add types and remove
 import React, { useEffect } from "react";
 
 const PaleoAgeInput = ({ paleoAge, paleoAgeChangeHandler }) => {

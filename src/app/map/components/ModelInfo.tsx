@@ -1,4 +1,5 @@
-import { List } from "flowbite-react";
+// @ts-nocheck -- ported from new-paleomap-maker (non-strict TS); TODO: add types and remove
+import { List } from "./ui";
 
 const ModelInfo = ({ modelName, modelList }) => {
   let currentModelDesc = "";

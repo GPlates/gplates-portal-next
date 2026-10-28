@@ -1,7 +1,8 @@
+// @ts-nocheck -- ported from new-paleomap-maker (non-strict TS); TODO: add types and remove
 "use client";
 
 import * as d3 from "d3";
-import { Button } from "flowbite-react";
+import { Button } from "../components/ui";
 import React, { useEffect } from "react";
 import ReactGA from "react-ga4";
 

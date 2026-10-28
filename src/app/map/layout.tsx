@@ -1,18 +1,16 @@
+import type { Metadata } from "next";
+import React from "react";
 import "./styles/global.css";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Paleomap Maker",
   description: "the new paleomap maker",
 };
 
-export default function RootLayout({
+export default function PaleomapMakerLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <html lang="en">
-      <body>{children}</body>
-    </html>
-  );
+  return <div className="paleomap-maker">{children}</div>;
 }

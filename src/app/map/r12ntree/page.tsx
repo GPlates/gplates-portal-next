@@ -1,8 +1,8 @@
+// @ts-nocheck -- ported from new-paleomap-maker (non-strict TS); TODO: add types and remove
 "use client";
 
 import * as d3 from "d3";
-import { Button } from "flowbite-react";
-import Link from "next/link";
+import { Button } from "../components/ui";
 import React, { useEffect } from "react";
 import ReactGA from "react-ga4";
 import GCombobox from "../components/GCombobox";
@@ -232,7 +232,7 @@ export default function R12nTreePage() {
       </div>
       <ModelInfo modelName={modelName} modelList={modelList} />
       <h2>
-        <Link href="/">Back to home</Link>
+        <a href="/">Back to home</a>
       </h2>
     </>
   );

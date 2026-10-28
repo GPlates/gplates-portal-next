@@ -33,7 +33,7 @@ const apps = [
   { name: 'PaleoDEM', url: '/cesium/?view=PaleoDEM', iconUrl: '/img/paleo-DEM-360x270.png', infoUrl: 'https://www.earthbyte.org/paleodem-resource-scotese-and-wright-2018/' },
   { name: 'Crustal And Lithospheric Thickness', url: '/cesium/?view=crustal_litho_thickness', iconUrl: '/img/crustal-thickness-360x270.png', infoUrl: 'https://www.earthbyte.org/webdav/ftp/earthbyte/gplates_portal/Afonso_etal_lithospheric_thickness_GJI2019/' },
   { name: 'Time Machine', url: 'https://deeptime.world/TimeMachine/', iconUrl: '/img/web-gplates-360x270.png', infoUrl: 'https://docs.deeptime.world/' },
-  { name: 'Reconstruction Tree', url: 'https://map.gplates.org/r12ntree', iconUrl: '/img/reconstruction-tree-360x270.png', infoUrl: '' },
+  { name: 'Reconstruction Tree', url: '/map/r12ntree', iconUrl: '/img/reconstruction-tree-360x270.png', infoUrl: '' },
 ];
 
 const people = [
