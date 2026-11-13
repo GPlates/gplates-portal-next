@@ -500,3 +500,20 @@
 .cesium-view-tooltip[hidden] {
   display: none;
 }
+
+/* animation views: frame and speed lists in place of the range + Ma box */
+.cesium-view-timeselect {
+  padding: 3px 6px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.07);
+  color: #e8e9ef;
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+
+.cesium-view-timeselect option {
+  background-color: #1b1d24;
+  color: #e8e9ef;
+}

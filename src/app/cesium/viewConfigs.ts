@@ -43,12 +43,38 @@ export type TimeCfg = {
   start: number;
   end: number;
   step: number;
+  /** the frame times, oldest first, when they aren't evenly spaced */
+  frames?: number[];
+};
+
+/** every frame time of a range, oldest first */
+export const framesOf = (cfg: TimeCfg): number[] => {
+  if (cfg.frames) return cfg.frames;
+  const frames: number[] = [];
+  for (let t = cfg.start; t >= cfg.end; t -= cfg.step) frames.push(t);
+  return frames;
+};
+
+/**
+ * A pre-rendered animation (the old AnimationView): one whole-globe image per
+ * frame at Animations/{name}/{time with 2 decimals}.{ext}, instead of a tile
+ * pyramid.
+ */
+export type AnimationCfg = {
+  name: string;
+  ext: 'png' | 'jpg';
+  credit?: string;
+  colorBar: string | null;
+  /** the fastest playback speed offered, in ms per frame */
+  fastestIntervalMs?: number;
 };
 
 export type GeoJsonLayerCfg = {
   name: string;
   /** rgba 0..1; defaults to the old GeoJsonLayer.js yellow */
   color?: LayerColor;
+  /** offer an on/off checkbox under this label (off by default) */
+  toggleLabel?: string;
 };
 
 /**
@@ -68,8 +94,8 @@ export type OverlayCfg = {
  * addDefaultMouseMoveHandler / refreshInfoPanel).
  */
 export type FeaturesCfg = {
-  /** GeoJson/{layer}/0.geojson.gz */
-  layer: string;
+  /** GeoJson/{layer}/0.geojson.gz for each */
+  layers: string[];
   /** which properties the info panel lists, under what labels; default: all */
   infoFields?: Record<string, string>;
   /** append "(ID: n)" to the panel title, as the generic old panel did */
@@ -81,7 +107,7 @@ export type FeaturesCfg = {
 export type ViewCfg = {
   title: string;
   /** the portal page or paper describing this dataset -- the old "About" button */
-  aboutUrl: string;
+  aboutUrl?: string;
   rasters: Record<string, RasterCfg>;
   terrains: Record<string, TerrainCfg>;
   /** present only on reconstruction views, which get a time slider */
@@ -92,6 +118,15 @@ export type ViewCfg = {
   overlays?: Record<string, OverlayCfg>;
   /** clickable vector features */
   features?: FeaturesCfg;
+  /** play pre-rendered frames instead of a tile pyramid; needs `time` */
+  animation?: AnimationCfg;
+  /** offer the graticule, shown or hidden to begin with */
+  graticule?: boolean;
+  /**
+   * clicking the globe asks GWS for the selected raster's value there; listed
+   * rasters are shown as whole numbers
+   */
+  rasterQuery?: { integerRasters?: string[] };
 };
 
 export const VIEWS = {
@@ -372,6 +407,7 @@ export const VIEWS = {
     },
     // this view drew its coastlines black rather than the default yellow
     geoJsonLayers: [{ name: 'earthbyte_coastlines_polyline', color: [0, 0, 0, 1] }],
+    rasterQuery: { integerRasters: ['crustal_thickness', 'lithospheric_thickness'] },
   },
   abyssal_hills: {
     title: 'Abyssal Hills',
@@ -546,7 +582,8 @@ export const VIEWS = {
       },
     },
     terrains: {},
-    features: { layer: 'ExRidges', infoFields: RIDGE_INFO_FIELDS, ridgeFilter: true },
+    features: { layers: ['ExRidges'], infoFields: RIDGE_INFO_FIELDS, ridgeFilter: true },
+    graticule: false,
   },
   contourites: {
     title: 'Contourites',
@@ -562,7 +599,153 @@ export const VIEWS = {
       },
     },
     terrains: {},
-    features: { layer: 'contourites', showIdInTitle: true },
+    features: { layers: ['contourites'], showIdInTitle: true },
+    graticule: false,
+  },
+  AgeGridP: {
+    title: 'Present-day Age Grid',
+    aboutUrl: '/portal/present_day_agegrid',
+    // neither raster was marked default, so the first one showed
+    rasters: {
+      age_grid_geek_2007: {
+        displayName: 'Age Grid Geek2007',
+        maxLevel: 6,
+        colorBar: '/img/agegrid-colorbar.png',
+        credit: 'EarthByte Group',
+      },
+      age_grid_gts_2012: {
+        displayName: 'Age Grid GTS2012',
+        maxLevel: 6,
+        colorBar: '/img/agegrid-colorbar.png',
+        credit: 'EarthByte Group',
+      },
+    },
+    // ...and no terrain was either, so it opened with none
+    terrains: {
+      VGG: {
+        displayName: 'Vertical Gravity Gradient',
+        maxLevel: 7,
+        defaultHeightScale: 200,
+        heightScales: [100, 200, 300, 500, 800],
+      },
+      DNS: {
+        displayName: 'Topography',
+        maxLevel: 7,
+        defaultHeightScale: 30,
+        heightScales: [10, 20, 30, 40, 50, 100],
+      },
+    },
+    graticule: false,
+    rasterQuery: {},
+  },
+  Biosphere: {
+    title: 'Deep Biosphere',
+    aboutUrl: '/portal/biosphere',
+    // all four were marked default; the old jQuery left the last one selected
+    rasters: {
+      HAMZA_20: {
+        displayName: 'HAMZA 20',
+        maxLevel: 5,
+        colorBar: '/img/biosphere_color_map.jpg',
+        credit: 'EarthByte Group, School of Geosciences, University of Sydney',
+      },
+      HAMZA_45: {
+        displayName: 'HAMZA 45',
+        maxLevel: 5,
+        colorBar: '/img/biosphere_color_map.jpg',
+        credit: 'EarthByte Group, School of Geosciences, University of Sydney',
+      },
+      HAMZA_80: {
+        displayName: 'HAMZA 80',
+        maxLevel: 5,
+        colorBar: '/img/biosphere_color_map.jpg',
+        credit: 'EarthByte Group, School of Geosciences, University of Sydney',
+      },
+      HAMZA_122: {
+        displayName: 'HAMZA 122',
+        maxLevel: 5,
+        colorBar: '/img/biosphere_color_map.jpg',
+        credit: 'EarthByte Group, School of Geosciences, University of Sydney',
+        default: true,
+      },
+    },
+    terrains: Object.fromEntries(
+      [20, 45, 80, 122].map((t) => [
+        `isotherm_elev_${t}`,
+        {
+          displayName: `isotherm elev ${t}`,
+          maxLevel: 6,
+          defaultHeightScale: 30,
+          heightScales: [10, 20, 30, 40, 50, 100],
+        },
+      ]),
+    ),
+    features: {
+      layers: ['deep_bioshpere_continent', 'deep_bioshpere_ocean'],
+      showIdInTitle: true,
+    },
+  },
+  AgeGrid: {
+    title: 'Age Grid Reconstruction',
+    aboutUrl: '/portal/agegrid_reconstruction',
+    time: { start: 230, end: 0, step: 1 },
+    animation: { name: 'AgeGrid', ext: 'jpg', colorBar: '/img/agegrid_colorbar.png' },
+    rasters: {},
+    terrains: {},
+    graticule: false,
+  },
+  PaleoDEM: {
+    title: 'PaleoDEM',
+    aboutUrl: 'https://www.earthbyte.org/paleodem-resource-scotese-and-wright-2018/',
+    time: {
+      start: 540,
+      end: 0,
+      step: 5,
+      // evenly spaced apart from 390.5 and 385.2
+      frames: [
+        ...Array.from({ length: 30 }, (_, i) => 540 - i * 5),
+        390.5,
+        385.2,
+        ...Array.from({ length: 77 }, (_, i) => 380 - i * 5),
+      ],
+    },
+    // AnimationView showed whatever colour bar cesium.html started with
+    animation: { name: 'PaleoDEM', ext: 'png', colorBar: '/img/haxby-height-color-bar.png' },
+    rasters: {},
+    terrains: {},
+    graticule: false,
+    geoJsonLayers: [
+      {
+        name: 'paleomap-plate-polygons',
+        color: [0, 0, 0, 1],
+        toggleLabel: 'Outlines of Continental Blocks',
+      },
+    ],
+  },
+  topo_recon: {
+    title: 'Topography Reconstruction',
+    time: { start: 200, end: 0, step: 1 },
+    animation: {
+      name: 'Topography',
+      ext: 'png',
+      credit: 'EarthByte Group and Scripps Institution of Oceanography',
+      colorBar: '/img/haxby-height-color-bar.png',
+      // TopoReconView dropped the x10 and x16 speeds
+      fastestIntervalMs: 250,
+    },
+    rasters: {},
+    terrains: {},
+    graticule: true,
+    geoJsonLayers: [{ name: 'cities' }],
+  },
+  Rodinia: {
+    title: 'Rodinia Reconstruction',
+    aboutUrl: '/portal/rodinia',
+    time: { start: 1100, end: 530, step: 5 },
+    animation: { name: 'Rodinia', ext: 'png', colorBar: null },
+    rasters: {},
+    terrains: {},
+    graticule: true,
   },
 } satisfies Record<string, ViewCfg>;
 
@@ -583,7 +766,8 @@ export const isViewName = (name: string): name is ViewName =>
 
 export const defaultRasterName = (view: ViewCfg) =>
   Object.entries(view.rasters).find(([, raster]) => raster.default)?.[0] ??
-  Object.keys(view.rasters)[0];
+  Object.keys(view.rasters)[0] ??
+  '';
 
 /** the terrain select always offers "None" first, so that's the fallback */
 export const defaultTerrainName = (view: ViewCfg) =>

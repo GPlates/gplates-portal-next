@@ -8,7 +8,10 @@ import { TimeSlider } from './TimeSlider';
 import { FeatureInfoPanel } from './FeatureInfoPanel';
 import { RidgesPanel } from './RidgesPanel';
 import { useFeaturePicking } from './useFeaturePicking';
-import { DEFAULT_LAYER_COLOR, loadGeoJsonLines } from '../../lib/cesium/geoJson';
+import { useRasterQuery } from './useRasterQuery';
+import { createAnimationFrameProvider } from '../../lib/cesium/animationFrames';
+import { createGraticuleProvider, fillGraticuleLabels } from '../../lib/cesium/graticule';
+import { DEFAULT_LAYER_COLOR, loadGeoJsonOverlay } from '../../lib/cesium/geoJson';
 import {
   CREDIT,
   TERRAIN_NONE,
@@ -61,6 +64,7 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
   const [enabledOverlays, setEnabledOverlays] = useState(() =>
     defaultOverlays(getView(initialView)),
   );
+  const [showGraticule, setShowGraticule] = useState(() => !!getView(initialView).graticule);
 
   // the imagery layer currently on screen, plus the ones waiting to be dropped
   // once their replacement has finished loading (see swapImagery)
@@ -68,10 +72,17 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
   const staleLayersRef = useRef<CesiumNS.ImageryLayer[]>([]);
   // vector overlays currently on screen, and a token identifying the newest
   // load so slower earlier ones can't overwrite it
-  const overlaysRef = useRef<CesiumNS.PolylineCollection[]>([]);
+  const overlaysRef = useRef<CesiumNS.PrimitiveCollection[]>([]);
   const overlayLoadRef = useRef(0);
   // toggleable imagery overlays, kept above the raster
   const imageryOverlaysRef = useRef<CesiumNS.ImageryLayer[]>([]);
+  const graticuleLayerRef = useRef<CesiumNS.ImageryLayer | null>(null);
+
+  // imagery that must stay above the raster/animation frame, in stacking order
+  const raiseTopLayers = (viewer: CesiumNS.Viewer) => {
+    for (const layer of imageryOverlaysRef.current) viewer.imageryLayers.raiseToTop(layer);
+    if (graticuleLayerRef.current) viewer.imageryLayers.raiseToTop(graticuleLayerRef.current);
+  };
 
   const view: ViewCfg = getView(viewName);
   const raster = view.rasters[rasterName];
@@ -79,6 +90,10 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
   const hasTerrains = Object.keys(view.terrains).length > 0;
 
   const picking = useFeaturePicking(viewerRef, viewerReady, view.features);
+  useRasterQuery(viewerRef, viewerReady, view.rasterQuery, rasterName);
+  const colorBar = view.animation ? view.animation.colorBar : raster?.colorBar;
+  const colorBarLink = view.animation ? undefined : raster?.colorBarLink;
+  const toggleableGeoJson = (view.geoJsonLayers ?? []).filter((l) => l.toggleLabel);
 
   // create the viewer once
   useEffect(() => {
@@ -166,6 +181,7 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
       mouseHandlerRef.current = null;
       overlaysRef.current = [];
       imageryOverlaysRef.current = [];
+      graticuleLayerRef.current = null;
       currentLayerRef.current = null;
       staleLayersRef.current = [];
       setViewerReady(false);
@@ -179,26 +195,28 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
   // swap the imagery layer whenever the view, raster or reconstruction time changes
   useEffect(() => {
     const viewer = viewerRef.current;
-    if (!viewer || !raster) return;
+    if (!viewer || (!raster && !view.animation)) return;
 
+    const anim = view.animation;
     const next = viewer.imageryLayers.addImageryProvider(
-      createImageryProvider(rasterName, raster, view.time ? time : undefined),
+      anim
+        ? createAnimationFrameProvider(anim.name, anim.ext, time, anim.credit)
+        : createImageryProvider(rasterName, raster, view.time ? time : undefined),
     );
     if (currentLayerRef.current) {
       staleLayersRef.current.push(currentLayerRef.current);
     }
     currentLayerRef.current = next;
     // a new raster lands on top of the stack, so lift the overlays back over it
-    for (const overlay of imageryOverlaysRef.current) {
-      viewer.imageryLayers.raiseToTop(overlay);
-    }
+    raiseTopLayers(viewer);
 
     // scrubbing the slider can outrun tile loading; don't let superseded
     // frames pile up while waiting for the globe to settle
     while (staleLayersRef.current.length > 3) {
       viewer.imageryLayers.remove(staleLayersRef.current.shift()!, true);
     }
-  }, [viewerReady, rasterName, raster, view.time, time]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [viewerReady, rasterName, raster, view.time, view.animation, time]);
 
   // swap the terrain provider whenever the view, terrain or height scale changes
   useEffect(() => {
@@ -221,17 +239,42 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
     imageryOverlaysRef.current = Object.entries(view.overlays ?? {})
       .filter(([name]) => enabledOverlays[name])
       .map(([name, cfg]) => viewer.imageryLayers.addImageryProvider(createOverlayProvider(name, cfg)));
+    if (graticuleLayerRef.current) viewer.imageryLayers.raiseToTop(graticuleLayerRef.current);
   }, [viewerReady, view, enabledOverlays]);
+
+  // the graticule: a grid imagery layer on top of everything, plus labels laid
+  // out for the globe or the flat map
+  useEffect(() => {
+    const viewer = viewerRef.current;
+    if (!viewer || view.graticule === undefined || !showGraticule) return;
+
+    let labels: CesiumNS.LabelCollection | null = null;
+    let layer: CesiumNS.ImageryLayer | null = null;
+    import('cesium').then((Cesium) => {
+      if (viewer.isDestroyed()) return;
+      layer = viewer.imageryLayers.addImageryProvider(createGraticuleProvider(Cesium));
+      graticuleLayerRef.current = layer;
+      labels = viewer.scene.primitives.add(new Cesium.LabelCollection());
+      fillGraticuleLabels(Cesium, labels!, projection !== '3D');
+    });
+    return () => {
+      graticuleLayerRef.current = null;
+      if (viewer.isDestroyed()) return;
+      if (layer) viewer.imageryLayers.remove(layer, true);
+      if (labels) viewer.scene.primitives.remove(labels);
+    };
+  }, [viewerReady, view.graticule, showGraticule, projection]);
 
   // redraw the vector overlays whenever the view or reconstruction time changes
   useEffect(() => {
     const viewer = viewerRef.current;
     if (!viewer) return;
 
-    const layers = view.geoJsonLayers ?? [];
+    // toggleable layers start off and load only once switched on
+    const layers = (view.geoJsonLayers ?? []).filter((l) => !l.toggleLabel || enabledOverlays[l.name]);
     const token = ++overlayLoadRef.current;
 
-    const replaceOverlays = (next: CesiumNS.PolylineCollection[]) => {
+    const replaceOverlays = (next: CesiumNS.PrimitiveCollection[]) => {
       // a newer load already landed, so this one is stale
       if (overlayLoadRef.current !== token || viewerRef.current !== viewer) {
         next.forEach((c) => c.destroy());
@@ -253,7 +296,7 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
       .then((Cesium) =>
         Promise.all(
           layers.map((layer) =>
-            loadGeoJsonLines(
+            loadGeoJsonOverlay(
               Cesium,
               layer.name,
               view.time ? time : 0,
@@ -264,7 +307,7 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
       )
       .then(replaceOverlays)
       .catch((err) => console.error('failed to load vector overlay', err));
-  }, [viewerReady, view, time]);
+  }, [viewerReady, view, time, enabledOverlays]);
 
   // switching view resets the raster/terrain selections to that view's defaults,
   // the way the old app built a whole new RasterTerrainView
@@ -278,6 +321,7 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
     setHeightScale(defaultHeightScale(cfg, nextTerrain));
     setTime(cfg.time?.start ?? 0);
     setEnabledOverlays(defaultOverlays(cfg));
+    setShowGraticule(!!cfg.graticule);
     // keep the URL shareable without remounting the viewer, which a router
     // navigation would do
     window.history.replaceState(null, '', `/cesium/?view=${encodeURIComponent(next)}`);
@@ -372,29 +416,35 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
       </div>
 
       <div className="cesium-view-topleft">
-        <a
-          className="cesium-view-about"
-          href={view.aboutUrl}
-          {...(view.aboutUrl.startsWith('http')
-            ? { target: '_blank', rel: 'noreferrer' }
-            : {})}
-        >
-          About
-        </a>
+        {view.aboutUrl && (
+          <a
+            className="cesium-view-about"
+            href={view.aboutUrl}
+            {...(view.aboutUrl.startsWith('http')
+              ? { target: '_blank', rel: 'noreferrer' }
+              : {})}
+          >
+            About
+          </a>
+        )}
 
         <div className="cesium-view-panel">
-          <label htmlFor="select-raster">Imagery</label>
-          <select
-            id="select-raster"
-            value={rasterName}
-            onChange={(e) => setRasterName(e.target.value)}
-          >
-            {Object.entries(view.rasters).map(([key, cfg]) => (
-              <option key={key} value={key}>
-                {cfg.displayName}
-              </option>
-            ))}
-          </select>
+          {raster && (
+            <>
+              <label htmlFor="select-raster">Imagery</label>
+              <select
+                id="select-raster"
+                value={rasterName}
+                onChange={(e) => setRasterName(e.target.value)}
+              >
+                {Object.entries(view.rasters).map(([key, cfg]) => (
+                  <option key={key} value={key}>
+                    {cfg.displayName}
+                  </option>
+                ))}
+              </select>
+            </>
+          )}
 
           {hasTerrains && (
             <>
@@ -431,11 +481,14 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
             </>
           )}
 
-          {view.overlays && (
+          {(view.overlays || toggleableGeoJson.length > 0 || view.graticule !== undefined) && (
             <>
               <span className="cesium-view-panel-label">Overlays</span>
               <div className="cesium-view-overlays">
-                {Object.entries(view.overlays).map(([name, cfg]) => (
+                {[
+                  ...Object.entries(view.overlays ?? {}).map(([name, cfg]) => [name, cfg.displayName]),
+                  ...toggleableGeoJson.map((l) => [l.name, l.toggleLabel!]),
+                ].map(([name, displayName]) => (
                   <label key={name}>
                     <input
                       type="checkbox"
@@ -444,9 +497,19 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
                         setEnabledOverlays((prev) => ({ ...prev, [name]: e.target.checked }))
                       }
                     />
-                    {cfg.displayName}
+                    {displayName}
                   </label>
                 ))}
+                {view.graticule !== undefined && (
+                  <label>
+                    <input
+                      type="checkbox"
+                      checked={showGraticule}
+                      onChange={(e) => setShowGraticule(e.target.checked)}
+                    />
+                    Graticule
+                  </label>
+                )}
               </div>
             </>
           )}
@@ -461,10 +524,10 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
         )}
       </div>
 
-      {raster?.colorBar && (
+      {colorBar && (
         <div className="cesium-view-colorbar">
-          <a href={raster.colorBarLink ?? raster.colorBar} target="_blank" rel="noreferrer">
-            <img src={raster.colorBar} alt="Color Bar" />
+          <a href={colorBarLink ?? colorBar} target="_blank" rel="noreferrer">
+            <img src={colorBar} alt="Color Bar" />
           </a>
         </div>
       )}
@@ -475,6 +538,7 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
           time={time}
           onChange={setTime}
           canAdvance={() => viewerRef.current?.scene.globe.tilesLoaded ?? false}
+          animation={view.animation}
         />
       )}
 
@@ -508,8 +572,11 @@ function createOverlayProvider(name: string, cfg: OverlayCfg) {
   }) as unknown as CesiumNS.ImageryProvider;
 }
 
-const defaultOverlays = (view: ViewCfg): Record<string, boolean> =>
-  Object.fromEntries(Object.entries(view.overlays ?? {}).map(([name, cfg]) => [name, cfg.enabled]));
+const defaultOverlays = (view: ViewCfg): Record<string, boolean> => ({
+  ...Object.fromEntries(Object.entries(view.overlays ?? {}).map(([name, cfg]) => [name, cfg.enabled])),
+  // toggleable vector layers start off, as PaleoDEM's continental blocks did
+  ...Object.fromEntries((view.geoJsonLayers ?? []).filter((l) => l.toggleLabel).map((l) => [l.name, false])),
+});
 
 function applyTerrain(
   viewer: CesiumNS.Viewer,

@@ -42,7 +42,7 @@ export function useFeaturePicking(
     let cancelled = false;
     let layer: PickableLayer | null = null;
     import('cesium')
-      .then((Cesium) => loadPickableLayer(Cesium, cfg.layer))
+      .then((Cesium) => loadPickableLayer(Cesium, cfg.layers))
       .then((loaded) => {
         if (cancelled || viewer.isDestroyed()) {
           loaded.destroy();
@@ -53,7 +53,7 @@ export function useFeaturePicking(
         layerRef.current = layer;
         setNamed(layer.features.filter((f) => f.isNamed));
       })
-      .catch((err) => console.error(`failed to load ${cfg.layer} features`, err));
+      .catch((err) => console.error(`failed to load ${cfg.layers.join(', ')} features`, err));
 
     return () => {
       cancelled = true;

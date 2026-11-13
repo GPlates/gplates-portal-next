@@ -1,5 +1,6 @@
 import type * as CesiumNS from 'cesium';
 import { LayerColor, fetchGeoJson } from './geoJson';
+import { DEFAULT_POINT_SCALE, isLonLat, pointImage } from './pointImages';
 
 /**
  * Port of the clickable-feature half of the old static/js/cesium/GeoJsonLayer.js,
@@ -9,9 +10,8 @@ import { LayerColor, fetchGeoJson } from './geoJson';
  * GeoJSON properties and is tagged as the Cesium pick `id` of everything drawn for
  * it, so scene.pick()/drillPick() lead straight back to the feature.
  *
- * Geometry handled: LineString, MultiLineString (the ExRidges view) and Polygon,
- * MultiPolygon (contourites). Points were only used by GSFML, which is still
- * blocked on its Django/Postgres endpoint.
+ * Geometry handled: LineString, MultiLineString (the ExRidges view), Polygon,
+ * MultiPolygon (contourites) and Point, MultiPoint (Biosphere's sample sites).
  */
 
 export type FeatureProperties = Record<string, unknown> & {
@@ -38,15 +38,19 @@ const HIGHLIGHT_OUTLINE_COLOR: LayerColor = [1, 1, 1, 1];
 export class PickableFeature {
   /** the polylines drawn for this feature (lines, or a polygon's outline) */
   readonly polylines: CesiumNS.Polyline[] = [];
+  /** the markers drawn for a point feature */
+  readonly billboards: CesiumNS.Billboard[] = [];
 
   constructor(
     readonly layerName: string,
     readonly properties: FeatureProperties,
-    /** one array per line or polygon ring */
+    /** one array per line or polygon ring; a single position per point */
     readonly rings: CesiumNS.Cartesian3[][],
     readonly color: LayerColor,
     readonly width: number,
     readonly isPolygon: boolean,
+    /** base marker scale, for points */
+    readonly scale = 1,
   ) {}
 
   get name() {
@@ -85,14 +89,17 @@ const toPositions = (Cesium: typeof CesiumNS, coords: number[][]) =>
 
 export async function loadPickableLayer(
   Cesium: typeof CesiumNS,
-  name: string,
+  names: string[],
   time = 0,
 ): Promise<PickableLayer> {
-  const data = await fetchGeoJson<Feature>(name, time);
+  const layers = await Promise.all(
+    names.map(async (name) => ({ name, data: await fetchGeoJson<Feature>(name, time) })),
+  );
 
   const lines = new Cesium.PolylineCollection();
   const highlightLines = new Cesium.PolylineCollection();
   const polygonInstances: CesiumNS.GeometryInstance[] = [];
+  const points = new Cesium.BillboardCollection();
   const features: PickableFeature[] = [];
 
   const addPolyline = (feature: PickableFeature, positions: CesiumNS.Cartesian3[], color: LayerColor, width: number) => {
@@ -100,7 +107,7 @@ export async function loadPickableLayer(
     feature.polylines.push(lines.add({ positions, material, width, id: feature }));
   };
 
-  for (const f of data.features) {
+  for (const { name, data } of layers) for (const f of data.features) {
     if (!f.geometry || !f.properties) continue;
     const props = f.properties;
     const { type, coordinates } = f.geometry;
@@ -138,8 +145,35 @@ export async function loadPickableLayer(
       }
       rings.forEach((r) => addPolyline(feature, r, POLYGON_OUTLINE_COLOR, 1));
       features.push(feature);
+    } else if (type === 'Point' || type === 'MultiPoint') {
+      const all = (type === 'Point' ? [coordinates] : coordinates) as unknown[];
+      const coords = all.filter(isLonLat);
+      if (coords.length < all.length) {
+        console.warn(`${name}: skipping a point with unusable coordinates`, props.name, all);
+      }
+      if (coords.length === 0) continue;
+      const positions = coords.map(([lon, lat]) => Cesium.Cartesian3.fromDegrees(lon, lat));
+      // createPrimitives fell back to black for points
+      const color = (props.color as LayerColor | undefined) ?? ([0, 0, 0, 1] as LayerColor);
+      const scale = typeof props.scale === 'number' ? props.scale : DEFAULT_POINT_SCALE;
+      const feature = new PickableFeature(name, props, positions.map((p) => [p]), color, 1, false, scale);
+      for (const position of positions) {
+        feature.billboards.push(
+          points.add({
+            image: pointImage(props.shape),
+            position,
+            color: toColor(Cesium, color),
+            scale,
+            scaleByDistance: new Cesium.NearFarScalar(1.5e4, 1.5, 1.5e7, 0.4),
+            id: feature,
+          }),
+        );
+      }
+      features.push(feature);
     }
   }
+
+  let highlighted: PickableFeature | null = null;
 
   // one batched primitive for every polygon fill; each instance keeps its
   // feature as its pick id
@@ -163,28 +197,39 @@ export async function loadPickableLayer(
       if (fills) scene.primitives.add(fills);
       scene.primitives.add(lines);
       scene.primitives.add(highlightLines);
+      scene.primitives.add(points);
     },
     removeFrom(scene) {
       // PrimitiveCollection destroys what it removes by default
       if (fills) scene.primitives.remove(fills);
       scene.primitives.remove(lines);
       scene.primitives.remove(highlightLines);
+      scene.primitives.remove(points);
     },
     destroy() {
       fills?.destroy();
       lines.destroy();
       highlightLines.destroy();
+      points.destroy();
     },
     setVisible(predicate) {
       for (const feature of features) {
         if (feature.isPolygon) continue;
         const show = predicate(feature);
         feature.polylines.forEach((p) => (p.show = show));
+        feature.billboards.forEach((b) => (b.show = show));
       }
     },
     highlight(feature) {
       highlightLines.removeAll();
+      highlighted?.billboards.forEach((b) => (b.scale = highlighted!.scale));
+      highlighted = feature;
       if (!feature) return;
+      if (feature.billboards.length > 0) {
+        // the old focusFeature doubled a point's scale
+        feature.billboards.forEach((b) => (b.scale = feature.scale * 2));
+        return;
+      }
       // the old focusFeature doubled the line width and gave it an outline
       const color = feature.isPolygon ? ([1, 1, 0, 1] as LayerColor) : feature.color;
       const width = Math.max(feature.width * 2, 3);
@@ -211,7 +256,17 @@ export const pickedFeature = (picked: unknown): PickableFeature | null => {
 };
 
 /** the old CesiumView.refreshInfoPanel never listed these */
-const EXCLUDED_PROPERTIES = new Set(['color', 'width', 'URL', 'scale', 'fill_polygon', 'GeometryType']);
+const EXCLUDED_PROPERTIES = new Set([
+  'color',
+  'width',
+  'URL',
+  'scale',
+  'fill_polygon',
+  'GeometryType',
+  // point styling
+  'shape',
+  'label',
+]);
 
 /**
  * Rows for the info panel. With `fields`, only those properties, in that order,
