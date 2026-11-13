@@ -1,0 +1,164 @@
+{
+    "name": "root",
+    "value": 0,
+    "children": [
+        {
+            "name": "Phanerozoic",
+            "begin": 541,
+            "end": 0,
+            "color": "#8bab79",
+            "children": [
+                {
+                    "name": "Cenozoic",
+                    "begin": 66,
+                    "end": 0,
+                    "color": "#f8ed00",
+                    "children": [
+                        {
+                            "name": "Quaternary",
+                            "begin": 2.58,
+                            "end": 0,
+                            "size_factor": 3,
+                            "color": "#fff799",
+                            "children": []
+                        },
+                        {
+                            "name": "Neogene",
+                            "begin": 23.03,
+                            "end": 2.58,
+                            "color": "#ffdd00",
+                            "children": []
+                        },
+                        {
+                            "name": "Paleogene",
+                            "begin": 66,
+                            "end": 23.03,
+                            "color": "#f9a870",
+                            "children": []
+                        }
+                    ]
+                },
+                {
+                    "name": "Mesozoic",
+                    "begin": 251.9,
+                    "end": 66,
+                    "color": "#4dc6e0",
+                    "children": [
+                        {
+                            "name": "Cretaceous",
+                            "begin": 145,
+                            "end": 66,
+                            "size_factor": 0.5,
+                            "color": "#88c86f",
+                            "children": []
+                        },
+                        {
+                            "name": "Jurassic",
+                            "begin": 201.3,
+                            "end": 145,
+                            "size_factor": 0.5,
+                            "color": "#00b9e7",
+                            "children": []
+                        },
+                        {
+                            "name": "Triassic",
+                            "begin": 251.9,
+                            "end": 201.3,
+                            "size_factor": 0.5,
+                            "color": "#8f53a1",
+                            "children": []
+                        }
+                    ]
+                },
+                {
+                    "name": "Paleozoic",
+                    "begin": 541,
+                    "end": 251.9,
+                    "size_factor": 0.25,
+                    "color": "#9ec2a6",
+                    "children": []
+                }
+            ]
+        },
+        {
+            "name": "Proterozoic",
+            "begin": 2500,
+            "end": 541,
+            "color": "#f05b78",
+            "children": [
+                {
+                    "name": "Neoproterozoic",
+                    "begin": 1000,
+                    "end": 541,
+                    "size_factor": 0.1,
+                    "color": "#fcba63",
+                    "children": []
+                },
+                {
+                    "name": "Mesoproterozoic",
+                    "begin": 1600,
+                    "end": 1000,
+                    "size_factor": 0.1,
+                    "color": "#fcbc7e",
+                    "children": []
+                },
+                {
+                    "name": "Paleoproterozoic",
+                    "begin": 2500,
+                    "end": 1600,
+                    "size_factor": 0.1,
+                    "color": "#f16681",
+                    "children": []
+                }
+            ]
+        },
+        {
+            "name": "Archean",
+            "begin": 4000,
+            "end": 2500,
+            "color": "#ed2591",
+            "children": [
+                {
+                    "name": "Neoarchean",
+                    "begin": 2800,
+                    "end": 2500,
+                    "size_factor": 0.1,
+                    "color": "#f7adc4",
+                    "children": []
+                },
+                {
+                    "name": "Mesoarchean",
+                    "begin": 3200,
+                    "end": 2800,
+                    "size_factor": 0.1,
+                    "color": "#f386ae",
+                    "children": []
+                },
+                {
+                    "name": "Paleoarchean",
+                    "begin": 3600,
+                    "end": 3200,
+                    "size_factor": 0.1,
+                    "color": "#f067a6",
+                    "children": []
+                },
+                {
+                    "name": "Eoarchean",
+                    "begin": 4000,
+                    "end": 3600,
+                    "size_factor": 0.1,
+                    "color": "#d80b8c",
+                    "children": []
+                }
+            ]
+        },
+        {
+            "name": "Hadeon",
+            "begin": 5000,
+            "end": 4000,
+            "size_factor": 0.1,
+            "color": "#d9394e",
+            "children": []
+        }
+    ]
+}
