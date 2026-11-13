@@ -5,6 +5,9 @@ import type * as CesiumNS from 'cesium';
 import { GPlatesImageryProvider } from '../../lib/cesium/GPlatesImageryProvider';
 import { GPlatesTerrainProvider } from '../../lib/cesium/GPlatesTerrainProvider';
 import { TimeSlider } from './TimeSlider';
+import { FeatureInfoPanel } from './FeatureInfoPanel';
+import { RidgesPanel } from './RidgesPanel';
+import { useFeaturePicking } from './useFeaturePicking';
 import { DEFAULT_LAYER_COLOR, loadGeoJsonLines } from '../../lib/cesium/geoJson';
 import {
   CREDIT,
@@ -17,6 +20,7 @@ import {
   defaultTerrainName,
   getView,
   groupOf,
+  OverlayCfg,
   VIEW_GROUPS,
   ViewGroup,
   viewNamesInGroup,
@@ -54,6 +58,9 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
   );
   // paleo-age in Ma; only meaningful for views that declare a time range
   const [time, setTime] = useState(() => getView(initialView).time?.start ?? 0);
+  const [enabledOverlays, setEnabledOverlays] = useState(() =>
+    defaultOverlays(getView(initialView)),
+  );
 
   // the imagery layer currently on screen, plus the ones waiting to be dropped
   // once their replacement has finished loading (see swapImagery)
@@ -63,11 +70,15 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
   // load so slower earlier ones can't overwrite it
   const overlaysRef = useRef<CesiumNS.PolylineCollection[]>([]);
   const overlayLoadRef = useRef(0);
+  // toggleable imagery overlays, kept above the raster
+  const imageryOverlaysRef = useRef<CesiumNS.ImageryLayer[]>([]);
 
   const view: ViewCfg = getView(viewName);
   const raster = view.rasters[rasterName];
   const terrain = terrainName === TERRAIN_NONE ? null : view.terrains[terrainName];
   const hasTerrains = Object.keys(view.terrains).length > 0;
+
+  const picking = useFeaturePicking(viewerRef, viewerReady, view.features);
 
   // create the viewer once
   useEffect(() => {
@@ -154,6 +165,7 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
       mouseHandlerRef.current?.destroy();
       mouseHandlerRef.current = null;
       overlaysRef.current = [];
+      imageryOverlaysRef.current = [];
       currentLayerRef.current = null;
       staleLayersRef.current = [];
       setViewerReady(false);
@@ -176,6 +188,10 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
       staleLayersRef.current.push(currentLayerRef.current);
     }
     currentLayerRef.current = next;
+    // a new raster lands on top of the stack, so lift the overlays back over it
+    for (const overlay of imageryOverlaysRef.current) {
+      viewer.imageryLayers.raiseToTop(overlay);
+    }
 
     // scrubbing the slider can outrun tile loading; don't let superseded
     // frames pile up while waiting for the globe to settle
@@ -194,6 +210,18 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
       }
     });
   }, [viewerReady, view, terrainName, heightScale]);
+
+  // redraw the imagery overlays whenever the view or the overlay toggles change
+  useEffect(() => {
+    const viewer = viewerRef.current;
+    if (!viewer) return;
+    for (const layer of imageryOverlaysRef.current) {
+      viewer.imageryLayers.remove(layer, true);
+    }
+    imageryOverlaysRef.current = Object.entries(view.overlays ?? {})
+      .filter(([name]) => enabledOverlays[name])
+      .map(([name, cfg]) => viewer.imageryLayers.addImageryProvider(createOverlayProvider(name, cfg)));
+  }, [viewerReady, view, enabledOverlays]);
 
   // redraw the vector overlays whenever the view or reconstruction time changes
   useEffect(() => {
@@ -249,6 +277,7 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
     setTerrainName(nextTerrain);
     setHeightScale(defaultHeightScale(cfg, nextTerrain));
     setTime(cfg.time?.start ?? 0);
+    setEnabledOverlays(defaultOverlays(cfg));
     // keep the URL shareable without remounting the viewer, which a router
     // navigation would do
     window.history.replaceState(null, '', `/cesium/?view=${encodeURIComponent(next)}`);
@@ -330,6 +359,16 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
             ))}
           </div>
         </div>
+
+        {view.features?.ridgeFilter && (
+          <RidgesPanel
+            filter={picking.ridgeFilter}
+            onFilterChange={picking.setRidgeFilter}
+            ridges={picking.listed}
+            selected={picking.selected}
+            onPick={picking.flyTo}
+          />
+        )}
       </div>
 
       <div className="cesium-view-topleft">
@@ -391,7 +430,35 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
               </select>
             </>
           )}
+
+          {view.overlays && (
+            <>
+              <span className="cesium-view-panel-label">Overlays</span>
+              <div className="cesium-view-overlays">
+                {Object.entries(view.overlays).map(([name, cfg]) => (
+                  <label key={name}>
+                    <input
+                      type="checkbox"
+                      checked={!!enabledOverlays[name]}
+                      onChange={(e) =>
+                        setEnabledOverlays((prev) => ({ ...prev, [name]: e.target.checked }))
+                      }
+                    />
+                    {cfg.displayName}
+                  </label>
+                ))}
+              </div>
+            </>
+          )}
         </div>
+
+        {view.features && picking.selected && (
+          <FeatureInfoPanel
+            feature={picking.selected}
+            cfg={view.features}
+            onClose={() => picking.setSelected(null)}
+          />
+        )}
       </div>
 
       {raster?.colorBar && (
@@ -412,6 +479,7 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
       )}
 
       <span ref={coordsRef} className="cesium-view-coordinates" />
+      <div ref={picking.tooltipRef} className="cesium-view-tooltip" hidden />
     </div>
   );
 }
@@ -429,6 +497,19 @@ function createImageryProvider(
     time,
   }) as unknown as CesiumNS.ImageryProvider;
 }
+
+function createOverlayProvider(name: string, cfg: OverlayCfg) {
+  return new GPlatesImageryProvider({
+    name,
+    format: 'png',
+    maxLevel: cfg.maxLevel,
+    // the old overlays passed a blank credit
+    creditText: ' ',
+  }) as unknown as CesiumNS.ImageryProvider;
+}
+
+const defaultOverlays = (view: ViewCfg): Record<string, boolean> =>
+  Object.fromEntries(Object.entries(view.overlays ?? {}).map(([name, cfg]) => [name, cfg.enabled]));
 
 function applyTerrain(
   viewer: CesiumNS.Viewer,

@@ -8,6 +8,7 @@
  */
 
 import { LayerColor } from '../../lib/cesium/geoJson';
+import { RIDGE_INFO_FIELDS } from '../../lib/cesium/exRidges';
 
 export const CREDIT = 'EarthByte Group and Scripps Institution of Oceanography';
 
@@ -50,6 +51,33 @@ export type GeoJsonLayerCfg = {
   color?: LayerColor;
 };
 
+/**
+ * A transparent PNG tile pyramid drawn over the selected raster, switched on and
+ * off independently (the old SeabedView / PolymetallicNodulesView overlay panel).
+ */
+export type OverlayCfg = {
+  displayName: string;
+  maxLevel: number;
+  /** on when the view opens */
+  enabled: boolean;
+};
+
+/**
+ * A GeoJSON layer whose features can be hovered for their name and clicked for
+ * an info panel (the old CesiumView addDefaultLeftClickHandler /
+ * addDefaultMouseMoveHandler / refreshInfoPanel).
+ */
+export type FeaturesCfg = {
+  /** GeoJson/{layer}/0.geojson.gz */
+  layer: string;
+  /** which properties the info panel lists, under what labels; default: all */
+  infoFields?: Record<string, string>;
+  /** append "(ID: n)" to the panel title, as the generic old panel did */
+  showIdInTitle?: boolean;
+  /** the ExRidges filter + ridge list panel */
+  ridgeFilter?: boolean;
+};
+
 export type ViewCfg = {
   title: string;
   /** the portal page or paper describing this dataset -- the old "About" button */
@@ -60,6 +88,10 @@ export type ViewCfg = {
   time?: TimeCfg;
   /** vector overlays, drawn from GeoJson/{name}/{time}.geojson.gz */
   geoJsonLayers?: GeoJsonLayerCfg[];
+  /** toggleable imagery overlays, drawn above the raster */
+  overlays?: Record<string, OverlayCfg>;
+  /** clickable vector features */
+  features?: FeaturesCfg;
 };
 
 export const VIEWS = {
@@ -434,6 +466,103 @@ export const VIEWS = {
         default: true,
       },
     },
+  },
+  seabed: {
+    title: 'Seafloor Lithology',
+    aboutUrl: '/portal/seafloor',
+    rasters: {
+      seabed: {
+        displayName: 'Seabed Lithology',
+        maxLevel: 4,
+        colorBar: '/img/seabed_lithology_colorbar.jpg',
+        credit: 'EarthByte Group, School of Geosciences, University of Sydney, NICTA',
+        default: true,
+      },
+    },
+    terrains: {
+      DNS: {
+        displayName: 'Topography',
+        maxLevel: 7,
+        defaultHeightScale: 30,
+        heightScales: [10, 20, 30, 40, 50, 100],
+        default: true,
+      },
+    },
+    overlays: {
+      rivers: { displayName: 'Rivers', maxLevel: 4, enabled: true },
+      'sample-points': { displayName: 'Sample Points', maxLevel: 4, enabled: true },
+    },
+  },
+  Polymetallic_Nodules: {
+    title: 'Polymetallic Nodules',
+    aboutUrl: '/portal/polymetallic_nodules',
+    rasters: {
+      polymetallic_nodules: {
+        displayName: 'Polymetallic_Nodules',
+        maxLevel: 4,
+        colorBar: '/img/nodule-probability-color-bar.png',
+        credit:
+          'EarthByte Group, School of Geosciences, Sydney Informatics Hub, University of Sydney',
+        default: true,
+      },
+    },
+    terrains: {
+      DNS: {
+        displayName: 'Topography',
+        maxLevel: 7,
+        defaultHeightScale: 30,
+        heightScales: [10, 20, 30, 40, 50, 100],
+        default: true,
+      },
+    },
+    overlays: {
+      control_samples: { displayName: 'Control Samples (White)', maxLevel: 4, enabled: true },
+      nodule_samples: { displayName: 'Nodule Samples (Black)', maxLevel: 4, enabled: true },
+    },
+  },
+  ExRidges: {
+    title: 'Extinct Ridges',
+    // not migrated to the new site yet
+    aboutUrl: '/portal/ExRidges',
+    rasters: {
+      GEBCO_2014_1D: {
+        displayName: 'GEBCO_2014_1D',
+        maxLevel: 6,
+        colorBar: null,
+        credit: 'EarthByte Group',
+        default: true,
+      },
+      VGG_Haxby: {
+        displayName: 'VGG Haxby',
+        maxLevel: 6,
+        colorBar: null,
+        credit: 'EarthByte Group',
+      },
+      VGG_GravityVGGShading: {
+        displayName: 'Gravity with VGG Shading',
+        maxLevel: 6,
+        colorBar: null,
+        credit: 'EarthByte Group',
+      },
+    },
+    terrains: {},
+    features: { layer: 'ExRidges', infoFields: RIDGE_INFO_FIELDS, ridgeFilter: true },
+  },
+  contourites: {
+    title: 'Contourites',
+    aboutUrl:
+      'https://www.earthbyte.org/controls-on-the-global-distribution-of-contourite-drifts-insights-from-an-eddy-resolving-ocean-model/',
+    rasters: {
+      GEBCO_2014_1D: {
+        displayName: 'GEBCO_2014_1D',
+        maxLevel: 6,
+        colorBar: null,
+        credit: 'EarthByte Group',
+        default: true,
+      },
+    },
+    terrains: {},
+    features: { layer: 'contourites', showIdInTitle: true },
   },
 } satisfies Record<string, ViewCfg>;
 

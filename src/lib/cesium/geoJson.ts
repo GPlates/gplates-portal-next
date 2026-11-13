@@ -27,13 +27,13 @@ type LineFeature = {
 export const geoJsonUrl = (name: string, time: number) =>
   `${TILE_SERVER_URL}/GeoJson/${name}/${time}.geojson.gz`;
 
-async function fetchGeoJson(name: string, time: number) {
+export async function fetchGeoJson<F = LineFeature>(name: string, time: number) {
   const response = await fetch(geoJsonUrl(name, time));
   if (!response.ok) {
     throw new Error(`${response.status} fetching ${geoJsonUrl(name, time)}`);
   }
   const text = new TextDecoder().decode(await gunzip(await response.arrayBuffer()));
-  return JSON.parse(text) as { features: LineFeature[] };
+  return JSON.parse(text) as { features: F[] };
 }
 
 /**
