@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { PickableFeature, infoRows } from '../../lib/cesium/pickableGeoJson';
-import { legacyPortalUrl } from '../../lib/legacyPortal';
+import { exRidgesAssetUrl } from '../../lib/exRidgesPages';
 import type { FeaturesCfg } from './viewConfigs';
 
 /** Port of the old #entity-info-panel jQuery UI dialog. */
@@ -47,7 +47,7 @@ export function FeatureInfoPanel({
         </table>
       )}
       {url && (
-        <a href={legacyPortalUrl(url)} target="_blank" rel="noreferrer">
+        <a href={exRidgesAssetUrl(url)} target="_blank" rel="noreferrer">
           More information &raquo;
         </a>
       )}

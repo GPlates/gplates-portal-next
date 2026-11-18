@@ -556,6 +556,42 @@ export const VIEWS = {
       nodule_samples: { displayName: 'Nodule Samples (Black)', maxLevel: 4, enabled: true },
     },
   },
+  GSFML: {
+    title: 'Magnetic Picks',
+    aboutUrl: '/portal/gsfml',
+    rasters: {
+      VGG_Greyscale: {
+        displayName: 'VGG Greyscale',
+        maxLevel: 6,
+        colorBar: null,
+        credit: 'EarthByte Group, SOEST, Univ. Hawaii and Scripps Institution of Oceanography',
+        default: true,
+      },
+    },
+    terrains: {},
+    /**
+     * The old createGSFMLView pulled the four regional pick sets from Django
+     * (`/portal/get_gsfml/?region=...`, a GlobalPicks query per region) and
+     * listed them beside seven static GeoJSON layers. All of it is on the data
+     * server already: the picks as one combined `GSFML` layer -- 95,339 points
+     * carrying their own `color`, which is the only property the old endpoint
+     * emitted -- and the seven others unchanged.
+     *
+     * The regional split is not reproduced because it was never usable: the old
+     * layers panel rendered its checkboxes `disabled`, so it only ever listed
+     * the layers and its change handler could not fire.
+     */
+    geoJsonLayers: [
+      { name: 'GSFML' },
+      { name: 'Fracture_zones' },
+      { name: 'Discordant_zones' },
+      { name: 'Propagating_ridges' },
+      { name: 'Unclassified_V-anomalies' },
+      { name: 'Extinct_ridges' },
+      { name: 'Pseudofaults' },
+      { name: 'V-shaped_structures' },
+    ],
+  },
   ExRidges: {
     title: 'Extinct Ridges',
     aboutUrl: '/portal/ExRidges',

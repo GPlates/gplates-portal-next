@@ -1,5 +1,5 @@
 import * as Cesium from 'cesium';
-import { TILE_SERVER_URL } from './tileServer';
+import { TILE_SERVER_URL } from '../tileServer';
 import { gunzip } from './gunzip';
 
 /**

@@ -2,21 +2,18 @@
 
 import { SiteFooter } from '../../../components/SiteFooter';
 import { SiteHeader } from '../../../components/SiteHeader';
-import { legacyPortalUrl } from '../../../lib/legacyPortal';
+import { exRidgesPageUrl } from '../../../lib/exRidgesPages';
 import './page.css';
 
 /**
- * The per-ridge summary pages are the ~250 MB of legacy HTML under
- * /static/html/ExRidges/ExRidges_HTML_pages/ on the old portal, too big for
- * public/. The old template reached them with <base href="...">; here every
- * link goes through legacyPortalUrl() so they all move together when that
- * tree gets a home of its own (see src/lib/legacyPortal.ts).
+ * The per-ridge summary pages are ~250 MB of legacy HTML, now hosted on the
+ * data server beside the tiles. The old template reached them with
+ * <base href="...">; here every link goes through one helper, so the whole
+ * index moves with a single constant (see src/lib/exRidgesPages.ts).
  */
-const PAGES_BASE = '/static/html/ExRidges/ExRidges_HTML_pages';
-
 type Ridge = { file: string; label: string };
 
-const summaryUrl = (file: string) => legacyPortalUrl(`${PAGES_BASE}/${file}`);
+const summaryUrl = (file: string) => exRidgesPageUrl(file);
 
 /**
  * Transcribed from portal/templates/ExtinctRidgeIndexList.html. IDs 3-04 and

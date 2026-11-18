@@ -1,5 +1,5 @@
 import * as Cesium from 'cesium';
-import { TILE_SERVER_URL } from './tileServer';
+import { TILE_SERVER_URL } from '../tileServer';
 
 /**
  * Port of the old gplates-portal GPlatesImageryProvider (static/js/cesium/GPlatesImageryProvider.js).

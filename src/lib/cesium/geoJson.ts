@@ -1,5 +1,5 @@
 import type * as CesiumNS from 'cesium';
-import { TILE_SERVER_URL } from './tileServer';
+import { TILE_SERVER_URL } from '../tileServer';
 import { gunzip } from './gunzip';
 import { DEFAULT_POINT_SCALE, isLonLat, pointImage } from './pointImages';
 

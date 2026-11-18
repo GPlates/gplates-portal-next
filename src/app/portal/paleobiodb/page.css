@@ -1,0 +1,114 @@
+/*
+ * The old page laid the form out as a 550px CSS table with three columns
+ * (label / control / enable checkbox), centred on the page. Same shape here,
+ * as a grid.
+ */
+.pbdb-options {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 350px) auto;
+  gap: 10px;
+  align-items: center;
+  width: fit-content;
+  max-width: 100%;
+  margin: 24px auto;
+}
+
+.pbdb-row {
+  display: contents;
+}
+
+.pbdb-row > label,
+.pbdb-row > .pbdb-note {
+  font-size: 15px;
+}
+
+.pbdb-row > select,
+.pbdb-row > div > input {
+  padding: 4px 6px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  background: #fff;
+}
+
+.pbdb-row > select {
+  width: 100%;
+}
+
+.pbdb-region,
+.pbdb-interval {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  align-items: center;
+}
+
+.pbdb-region input {
+  width: 150px;
+  border-radius: 10px;
+}
+
+.pbdb-interval input {
+  width: 120px;
+  border-radius: 10px;
+}
+
+/* the old page greyed out a disabled control rather than dimming it */
+.pbdb-options select:disabled,
+.pbdb-options input:disabled {
+  color: gray;
+  background-color: lightgray;
+}
+
+.pbdb-actions {
+  text-align: center;
+}
+
+.pbdb-actions .legacy-success-btn {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.pbdb-actions .legacy-success-btn:disabled {
+  opacity: 0.65;
+  cursor: progress;
+}
+
+.pbdb-alert {
+  padding: 15px;
+  margin: 20px 0;
+  border: 1px solid transparent;
+  border-radius: 4px;
+}
+
+.pbdb-alert p {
+  margin: 0;
+}
+
+.pbdb-alert p + p {
+  margin-top: 10px;
+}
+
+/* bootstrap's alert-info / alert-success / alert-danger, which the old page used */
+.pbdb-info {
+  color: #31708f;
+  background-color: #d9edf7;
+  border-color: #bce8f1;
+}
+
+.pbdb-success {
+  color: #3c763d;
+  background-color: #dff0d8;
+  border-color: #d6e9c6;
+}
+
+.pbdb-error {
+  color: #a94442;
+  background-color: #f2dede;
+  border-color: #ebccd1;
+}
+
+.pbdb-query {
+  font-size: 13px;
+  word-break: break-all;
+}
