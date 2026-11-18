@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { PickableFeature, infoRows } from '../../lib/cesium/pickableGeoJson';
-import { legacyPortalUrl } from '../../lib/cesium/legacyPortal';
+import { legacyPortalUrl } from '../../lib/legacyPortal';
 import type { FeaturesCfg } from './viewConfigs';
 
 /** Port of the old #entity-info-panel jQuery UI dialog. */

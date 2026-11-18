@@ -3,7 +3,7 @@
 import { MutableRefObject, useEffect } from 'react';
 import type * as CesiumNS from 'cesium';
 import { circleImage } from '../../lib/cesium/pointImages';
-import { queryRaster } from '../../lib/cesium/gws';
+import { queryRaster } from '../../lib/gws';
 import type { ViewCfg } from './viewConfigs';
 
 /**

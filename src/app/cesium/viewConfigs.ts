@@ -558,7 +558,6 @@ export const VIEWS = {
   },
   ExRidges: {
     title: 'Extinct Ridges',
-    // not migrated to the new site yet
     aboutUrl: '/portal/ExRidges',
     rasters: {
       GEBCO_2014_1D: {

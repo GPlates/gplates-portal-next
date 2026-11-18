@@ -1,6 +1,6 @@
 // @ts-nocheck -- ported from new-paleomap-maker (non-strict TS); TODO: add types and remove
 import * as d3 from "d3";
-import { GWS_SERVER_URL } from "../gSettings";
+import { GWS_URL } from "../../../lib/gws";
 /**
  *
  * @param svgRef
@@ -20,7 +20,7 @@ export const drawCoastlines = async (
 
   return d3
     .json(
-      GWS_SERVER_URL +
+      GWS_URL +
         "/reconstruct/coastlines_low/?time=" +
         paleoAge +
         "&model=" +

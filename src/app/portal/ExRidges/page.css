@@ -1,0 +1,14 @@
+/*
+ * The old page's own stylesheet (/static/html/ExRidges/styles.css) set
+ * `ul { list-style-type: none }`, so the index read as a plain list of links
+ * rather than a bulleted one. globals.css bullets and indents `.legacy-content
+ * ul`, so the index opts back out here.
+ */
+.exridges-index {
+  padding-left: 0;
+  list-style: none;
+}
+
+.exridges-index li {
+  margin: 0 0 4px;
+}

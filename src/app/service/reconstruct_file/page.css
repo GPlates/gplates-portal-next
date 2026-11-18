@@ -1,0 +1,71 @@
+/*
+ * The old page sized the form and the file list to a fixed 500px centred
+ * column and used bootstrap's btn-info / btn-success for the two buttons --
+ * globals.css already carries those two as .legacy-info-btn /
+ * .legacy-success-btn, so only the disabled state and the layout are here.
+ */
+.reconstruct-form,
+.reconstruct-files {
+  width: min(500px, 100%);
+  margin: 0 auto;
+}
+
+.reconstruct-form {
+  margin-top: 24px;
+}
+
+.reconstruct-field {
+  display: flex;
+  align-items: center;
+  margin: 5px 0;
+}
+
+.reconstruct-field label {
+  width: 200px;
+  flex: none;
+}
+
+.reconstruct-field input,
+.reconstruct-field select {
+  width: 240px;
+  padding: 4px 6px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  background: #fff;
+}
+
+.reconstruct-field select {
+  width: 280px;
+}
+
+.reconstruct-unit {
+  margin-left: 5px;
+}
+
+.reconstruct-actions {
+  margin-top: 20px;
+  text-align: center;
+}
+
+/* globals.css styles these two for <a>; these are real buttons */
+.reconstruct-actions .legacy-info-btn,
+.reconstruct-actions .legacy-success-btn {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* bootstrap's .disabled on an <a>; a real <button> uses :disabled */
+.reconstruct-actions .legacy-success-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.reconstruct-files {
+  margin-top: 24px;
+}
+
+.reconstruct-empty {
+  color: #dc3545;
+  line-height: 1.8;
+}

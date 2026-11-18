@@ -1,0 +1,104 @@
+/*
+ * Ported from the <style> block in service/templates/d3_map.html. The old page
+ * was standalone -- no portal header, footer or marble background -- and this
+ * keeps it that way, since it is an API demo rather than an informational page.
+ */
+.d3-demo {
+  width: 962px;
+  max-width: 100%;
+  margin: 0 auto;
+  overflow: hidden;
+  background: #fff;
+  color: #000;
+  font-family: sans-serif;
+}
+
+.d3-demo-time {
+  width: 960px;
+  max-width: 100%;
+  margin: 0 auto;
+  font-size: 3em;
+  text-align: center;
+}
+
+.d3-demo-canvas svg {
+  display: block;
+  width: 960px;
+  max-width: 100%;
+  height: 500px;
+  margin: 0 auto 20px;
+  border: none;
+}
+
+.d3-demo-controls {
+  text-align: center;
+}
+
+.d3-demo-row {
+  margin-bottom: 5px;
+}
+
+.d3-demo-row #recon-time,
+.d3-demo-row #select-projection {
+  margin-right: 10px;
+}
+
+.d3-demo-locations {
+  margin: 10px 0;
+}
+
+.d3-demo-location {
+  margin-bottom: 5px;
+}
+
+.d3-demo-location-name {
+  margin-right: 20px;
+}
+
+.d3-demo-coord {
+  width: 40px;
+}
+
+.d3-demo-paleo {
+  width: 60px;
+}
+
+.d3-demo-output {
+  margin: 20px 0;
+  word-break: break-all;
+}
+
+/* the old page's SVG styling, unchanged */
+.d3-demo path {
+  stroke: blue;
+  stroke-width: 0.25px;
+  fill: grey;
+}
+
+.d3-demo circle {
+  fill: red;
+}
+
+.d3-demo .pathPoint {
+  fill: red;
+}
+
+.d3-demo .graticule {
+  fill: none;
+  stroke: #777;
+  stroke-width: 0.5px;
+  stroke-opacity: 0.5;
+}
+
+.d3-demo .RG {
+  fill: none;
+  stroke-width: 1px;
+  stroke: red;
+}
+
+.d3-demo .coastline {
+  fill-opacity: 1;
+  fill: lightgray;
+  stroke: grey;
+  stroke-width: 0.25px;
+}

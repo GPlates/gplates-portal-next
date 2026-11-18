@@ -1,6 +1,6 @@
 // @ts-nocheck -- ported from new-paleomap-maker (non-strict TS); TODO: add types and remove
 import * as d3 from "d3";
-import { GWS_SERVER_URL } from "../gSettings";
+import { GWS_URL } from "../../../lib/gws";
 import { drawPoint } from "./drawPoint";
 
 export const drawCities = (svgRef, paleoAge, projection, modelName) => {
@@ -9,7 +9,7 @@ export const drawCities = (svgRef, paleoAge, projection, modelName) => {
 
   return d3
     .json(
-      GWS_SERVER_URL +
+      GWS_URL +
         "/earth/get_cities?time=" +
         paleoAge +
         "&model=" +
