@@ -9,6 +9,7 @@
 
 import { LayerColor } from '../../lib/cesium/geoJson';
 import { RIDGE_INFO_FIELDS } from '../../lib/cesium/exRidges';
+import type { RiftColorBy } from '../../lib/cesium/riftColormaps';
 
 export const CREDIT = 'EarthByte Group and Scripps Institution of Oceanography';
 
@@ -62,11 +63,35 @@ export const framesOf = (cfg: TimeCfg): number[] => {
  */
 export type AnimationCfg = {
   name: string;
-  ext: 'png' | 'jpg';
+  ext: 'png' | 'jpg' | 'jpeg';
   credit?: string;
   colorBar: string | null;
+  /** override the colour-bar slot's width, for a legend of a different shape */
+  colorBarWidth?: number;
   /** the fastest playback speed offered, in ms per frame */
   fastestIntervalMs?: number;
+};
+
+/**
+ * The rift point markers (the old RiftObliquityView), drawn over the
+ * Rift_Low_Res animation from the one static track dataset. `colorBy` is what
+ * picked between the old view's two data endpoints: colour reads as obliquity
+ * on rift_ov and as velocity on rift_v, over the same points, and marker size
+ * reads as velocity on both.
+ */
+export type RiftPointsCfg = {
+  colorBy: RiftColorBy;
+};
+
+/**
+ * Text for the "About" button to show in a panel, rather than linking out --
+ * the old jQuery UI "About This Web Page" dialogs, whose content lived in
+ * static/html/*_info.html and belongs to the viewer rather than to a page of
+ * its own.
+ */
+export type AboutCfg = {
+  paragraphs: { label: string; text: string }[];
+  cite: { text: string; url: string };
 };
 
 export type GeoJsonLayerCfg = {
@@ -108,6 +133,8 @@ export type ViewCfg = {
   title: string;
   /** the portal page or paper describing this dataset -- the old "About" button */
   aboutUrl?: string;
+  /** the same button, showing text in a panel instead of linking out */
+  about?: AboutCfg;
   rasters: Record<string, RasterCfg>;
   terrains: Record<string, TerrainCfg>;
   /** present only on reconstruction views, which get a time slider */
@@ -120,6 +147,8 @@ export type ViewCfg = {
   features?: FeaturesCfg;
   /** play pre-rendered frames instead of a tile pyramid; needs `time` */
   animation?: AnimationCfg;
+  /** the rift point markers and their charts; needs `time` */
+  riftPoints?: RiftPointsCfg;
   /** offer the graticule, shown or hidden to begin with */
   graticule?: boolean;
   /**
@@ -127,6 +156,98 @@ export type ViewCfg = {
    * rasters are shown as whole numbers
    */
   rasterQuery?: { integerRasters?: string[] };
+};
+
+/**
+ * The rift views (the old RiftObliquityView) differ only in what their circles'
+ * colour means, so everything else about them is shared.
+ *
+ * The 241 integer frames are the ones the points exist at and the ones the
+ * Rift_Low_Res animation has, which is no coincidence: both come from the same
+ * run. The old view set the frame interval to 250ms, which is the animation
+ * speed list's default anyway.
+ */
+const RIFT_TIME: TimeCfg = { start: 240, end: 0, step: 1 };
+
+const RIFT_ANIMATION = { name: 'Rift_Low_Res', ext: 'jpeg' } as const;
+
+/** static/html/rift_info.html, verbatim */
+const RIFT_VELOCITY_ABOUT: AboutCfg = {
+  paragraphs: [
+    {
+      label: 'Info',
+      text:
+        "This data set visualizes extension velocities at Earth's major post-Pangea rift " +
+        'systems. Each circle depicts the rift velocity of one passive margin point in terms ' +
+        'of circle color and size. The geologic time and the layout can be changed at the top ' +
+        'of the screen.',
+    },
+    {
+      label: 'Interaction',
+      text:
+        'By clicking on a circle, the entire velocity evolution of this point is plotted from ' +
+        'rift inception to break-up.',
+    },
+    {
+      label: 'Download',
+      text:
+        'Velocity histories of each point can be downloaded in comma-separated format. Click ' +
+        'on a circle to visualize velocity history and use the download button at the bottom ' +
+        'of the diagram. Data are given as comma separated values in 4 columns: (1) Time in ' +
+        'Ma, (2) Longitude in deg, (3) Latitude in deg, (4) Full rift velocity in mm/yr.',
+    },
+    {
+      label: 'Background info',
+      text:
+        'Detailed information on the plate tectonic model, the workflow, and the implications ' +
+        'can be found in the following publication.',
+    },
+  ],
+  cite: {
+    text:
+      'Brune, S., S. E. Williams, N. P. Butterworth, and D. R. Müller (2016), Abrupt plate ' +
+      'accelerations shape rifted continental margins, Nature 1-4 (2016), doi:10.1038/nature18319.',
+    url: 'http://www.nature.com/nature/journal/vaop/ncurrent/full/nature18319.html',
+  },
+};
+
+/** static/html/rift_o_info.html, verbatim -- "4 columns" then five included */
+const RIFT_OBLIQUITY_ABOUT: AboutCfg = {
+  paragraphs: [
+    {
+      label: 'Info',
+      text:
+        "This data set visualizes extension velocities and obliquities within Earth's major " +
+        'post-Pangea rift systems. Each circle depicts the rift kinematics of one passive ' +
+        'margin point, with the circle size representing rift velocity and the circle colour ' +
+        'representing rift obliquity. The geologic time and the layout can be changed at the ' +
+        'top of the screen.',
+    },
+    {
+      label: 'Interaction',
+      text:
+        'By clicking on a circle, the entire velocity and obliquity evolution of this point is ' +
+        'plotted from rift inception to break-up.',
+    },
+    {
+      label: 'Download',
+      text:
+        'Velocity histories of each point can be downloaded in comma-separated format. Click ' +
+        'on a circle to visualize velocity history and use the download button at the bottom ' +
+        'of the diagram. Data are given as comma separated values in 4 columns: (1) Time in ' +
+        'Ma, (2) Longitude in deg, (3) Latitude in deg, (4) Full rift velocity in mm/yr, ' +
+        '(5) Rift Obliquity in degrees. Note that the obliquities for individual points may ' +
+        'differ from adjacent points within the conjugate margin due to COB geometries, and it ' +
+        'is recommended to average values from both rift flanks to obtain a representative ' +
+        'obliquity for any given rift segment.',
+    },
+  ],
+  cite: {
+    text:
+      'Brune, S., Williams, S.E., and Müller, R.D., 2018, Oblique rifting: the rule, not the ' +
+      'exception, Solid Earth, 9, 1187-1206, https://doi.org/10.5194/se-9-1187-2018',
+    url: 'https://www.solid-earth.net/9/1187/2018/se-9-1187-2018.pdf',
+  },
 };
 
 export const VIEWS = {
@@ -782,7 +903,49 @@ export const VIEWS = {
     terrains: {},
     graticule: true,
   },
+  rift_v: {
+    title: 'Rift Velocity',
+    about: RIFT_VELOCITY_ABOUT,
+    time: RIFT_TIME,
+    animation: {
+      ...RIFT_ANIMATION,
+      // a tall legend; the old view gave this one a 70px box and the obliquity
+      // one 425px, rather than the shared colour-bar width
+      colorBar: '/img/rift_legend.png',
+      colorBarWidth: 70,
+    },
+    riftPoints: { colorBy: 'velocity' },
+    rasters: {},
+    terrains: {},
+    graticule: false,
+  },
+  rift_ov: {
+    title: 'Rift Obliquity',
+    about: RIFT_OBLIQUITY_ABOUT,
+    time: RIFT_TIME,
+    animation: {
+      ...RIFT_ANIMATION,
+      colorBar: '/img/rift_obliquity_legend.png',
+      colorBarWidth: 425,
+    },
+    riftPoints: { colorBy: 'obliquity' },
+    rasters: {},
+    terrains: {},
+    graticule: false,
+  },
 } satisfies Record<string, ViewCfg>;
+
+/**
+ * Old `?view=` keys that are no longer views of their own. `rift` and `rift_v`
+ * were both wired to createRiftvView in the old Viewport.js, which could afford
+ * two names for one view because it had no view picker -- the key came from the
+ * URL and nothing listed them. Keeping the alias keeps those links working.
+ */
+export const VIEW_ALIASES: Record<string, ViewName> = { rift: 'rift_v' };
+
+/** the view a `?view=` value names, following the aliases above */
+export const resolveViewName = (name: string): ViewName | null =>
+  isViewName(name) ? name : (VIEW_ALIASES[name] ?? null);
 
 export type ViewName = keyof typeof VIEWS;
 

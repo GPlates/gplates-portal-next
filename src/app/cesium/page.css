@@ -517,3 +517,93 @@
   background-color: #1b1d24;
   color: #e8e9ef;
 }
+
+/* the About button, for views whose text opens in a panel rather than linking
+   out (the rift views); the shared card rule above gives it its surface */
+button.cesium-view-about {
+  font: inherit;
+  cursor: pointer;
+}
+
+.cesium-view-about-panel p {
+  margin: 0 0 8px;
+  line-height: 1.45;
+}
+
+.cesium-view-about-panel p:last-child {
+  margin-bottom: 0;
+}
+
+.cesium-view-about-panel strong {
+  color: #fff;
+}
+
+.cesium-view-about-panel a {
+  color: #8ab4f8;
+}
+
+.cesium-view-error {
+  margin: 0;
+  padding: 6px 10px;
+  border: 1px solid rgba(255, 120, 120, 0.4);
+  border-radius: 6px;
+  background-color: rgba(60, 24, 24, 0.85);
+  color: #f3c9c9;
+}
+
+/* the rift point charts. Wide enough for the old dialog's 500px plots, and the
+   plots themselves keep the old black-on-white treatment -- a data chart reads
+   better that way than tinted into the dark card around it. */
+.rift-info {
+  width: 522px;
+}
+
+.rift-chart {
+  display: block;
+  margin-bottom: 8px;
+  border-radius: 4px;
+  background-color: #fff;
+  /* wheel-zoom and drag-pan, so the browser must not scroll or pan instead */
+  touch-action: none;
+  cursor: grab;
+}
+
+.rift-chart:active {
+  cursor: grabbing;
+}
+
+.rift-chart-axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.rift-chart-axis text {
+  fill: #000;
+  font-size: 10px;
+}
+
+.rift-chart-label {
+  fill: #000;
+  font-size: 11px;
+}
+
+.rift-chart-line {
+  fill: none;
+  stroke: #000;
+  stroke-width: 1.5px;
+}
+
+.rift-chart-point {
+  fill: blue;
+}
+
+/* the point at the frame on the globe */
+.rift-chart-point-now {
+  fill: red;
+}
+
+.rift-info-download {
+  display: inline-block;
+  color: #8ab4f8;
+}

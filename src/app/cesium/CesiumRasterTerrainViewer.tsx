@@ -5,10 +5,13 @@ import type * as CesiumNS from 'cesium';
 import { GPlatesImageryProvider } from '../../lib/cesium/GPlatesImageryProvider';
 import { GPlatesTerrainProvider } from '../../lib/cesium/GPlatesTerrainProvider';
 import { TimeSlider } from './TimeSlider';
+import { AboutPanel } from './AboutPanel';
 import { FeatureInfoPanel } from './FeatureInfoPanel';
 import { RidgesPanel } from './RidgesPanel';
+import { RiftInfoPanel } from './RiftInfoPanel';
 import { useFeaturePicking } from './useFeaturePicking';
 import { useRasterQuery } from './useRasterQuery';
+import { useRiftPoints } from './useRiftPoints';
 import { createAnimationFrameProvider } from '../../lib/cesium/animationFrames';
 import { createGraticuleProvider, fillGraticuleLabels } from '../../lib/cesium/graticule';
 import { DEFAULT_LAYER_COLOR, loadGeoJsonOverlay } from '../../lib/cesium/geoJson';
@@ -65,6 +68,8 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
     defaultOverlays(getView(initialView)),
   );
   const [showGraticule, setShowGraticule] = useState(() => !!getView(initialView).graticule);
+  // the old About dialog opened on demand and closed on Escape; it starts shut
+  const [showAbout, setShowAbout] = useState(false);
 
   // the imagery layer currently on screen, plus the ones waiting to be dropped
   // once their replacement has finished loading (see swapImagery)
@@ -91,6 +96,7 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
 
   const picking = useFeaturePicking(viewerRef, viewerReady, view.features);
   useRasterQuery(viewerRef, viewerReady, view.rasterQuery, rasterName);
+  const rift = useRiftPoints(viewerRef, viewerReady, view.riftPoints, time);
   const colorBar = view.animation ? view.animation.colorBar : raster?.colorBar;
   const colorBarLink = view.animation ? undefined : raster?.colorBarLink;
   const toggleableGeoJson = (view.geoJsonLayers ?? []).filter((l) => l.toggleLabel);
@@ -322,6 +328,7 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
     setTime(cfg.time?.start ?? 0);
     setEnabledOverlays(defaultOverlays(cfg));
     setShowGraticule(!!cfg.graticule);
+    setShowAbout(false);
     // keep the URL shareable without remounting the viewer, which a router
     // navigation would do
     window.history.replaceState(null, '', `/cesium/?view=${encodeURIComponent(next)}`);
@@ -416,16 +423,31 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
       </div>
 
       <div className="cesium-view-topleft">
-        {view.aboutUrl && (
-          <a
+        {view.about ? (
+          <button
+            type="button"
             className="cesium-view-about"
-            href={view.aboutUrl}
-            {...(view.aboutUrl.startsWith('http')
-              ? { target: '_blank', rel: 'noreferrer' }
-              : {})}
+            aria-expanded={showAbout}
+            onClick={() => setShowAbout((shown) => !shown)}
           >
             About
-          </a>
+          </button>
+        ) : (
+          view.aboutUrl && (
+            <a
+              className="cesium-view-about"
+              href={view.aboutUrl}
+              {...(view.aboutUrl.startsWith('http')
+                ? { target: '_blank', rel: 'noreferrer' }
+                : {})}
+            >
+              About
+            </a>
+          )
+        )}
+
+        {view.about && showAbout && (
+          <AboutPanel about={view.about} onClose={() => setShowAbout(false)} />
         )}
 
         <div className="cesium-view-panel">
@@ -522,10 +544,24 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
             onClose={() => picking.setSelected(null)}
           />
         )}
+
+        {rift.error && <p className="cesium-view-error">{rift.error}</p>}
+
+        {view.riftPoints && rift.selected && (
+          <RiftInfoPanel
+            point={rift.selected}
+            cfg={view.riftPoints}
+            time={time}
+            onClose={() => rift.setSelected(null)}
+          />
+        )}
       </div>
 
       {colorBar && (
-        <div className="cesium-view-colorbar">
+        <div
+          className="cesium-view-colorbar"
+          style={view.animation?.colorBarWidth ? { width: view.animation.colorBarWidth } : undefined}
+        >
           <a href={colorBarLink ?? colorBar} target="_blank" rel="noreferrer">
             <img src={colorBar} alt="Color Bar" />
           </a>
