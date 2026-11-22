@@ -60,9 +60,11 @@ export function TimeSlider({
   // the interval callback must see the current frame without being torn down
   // and rebuilt on every frame, which would reset the timer
   const indexRef = useRef(index);
-  indexRef.current = index;
   const canAdvanceRef = useRef(canAdvance);
-  canAdvanceRef.current = canAdvance;
+  useEffect(() => {
+    indexRef.current = index;
+    canAdvanceRef.current = canAdvance;
+  });
 
   useEffect(() => {
     if (!playing) return;
@@ -79,7 +81,11 @@ export function TimeSlider({
   }, [playing, frames, interval, onChange]);
 
   // stop playback when the view (and so the time range) changes underneath us
-  useEffect(() => setPlaying(false), [cfg]);
+  const [prevCfg, setPrevCfg] = useState(cfg);
+  if (cfg !== prevCfg) {
+    setPrevCfg(cfg);
+    setPlaying(false);
+  }
 
   const goTo = (i: number) => {
     setPlaying(false);

@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { ScreenshotCarousel } from '../../../components/ScreenshotCarousel';
 import { SiteFooter } from '../../../components/SiteFooter';
 import { SiteHeader } from '../../../components/SiteHeader';
@@ -115,9 +116,9 @@ export default function WelcomePage() {
         </section>
 
         <div className="welcome-callout">
-          <a className="legacy-success-btn" href="/#apps" target="_self" rel="noreferrer">
+          <Link className="legacy-success-btn" href="/#apps">
             Check out the applications
-          </a>
+          </Link>
         </div>
 
         <section className="welcome-section">
