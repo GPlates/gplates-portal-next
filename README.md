@@ -27,4 +27,4 @@ The new Paleomap Maker (previously the separate `michaelchin/new-paleomap-maker`
 - `/map/r12ntree` – reconstruction tree
 - `/map/timescale` – geological timescale
 
-These pages use Tailwind CSS (config in `tailwind.config.js`, scoped to `src/app/map`), d3 and react-ga4. The rest of the portal does not load Tailwind. The ported files still carry `// @ts-nocheck` because they were written for non-strict TypeScript; remove it as each file gets proper types.
+These pages use Tailwind CSS (config in `tailwind.config.js`, scoped to `src/app/map`), d3 and react-ga4. The rest of the portal does not load Tailwind. Shared types for these pages are in `src/app/map/types.ts`.

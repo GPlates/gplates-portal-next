@@ -1,7 +1,7 @@
-// @ts-nocheck -- ported from new-paleomap-maker (non-strict TS); TODO: add types and remove
 "use client";
 
 import * as d3 from "d3";
+import Link from "next/link";
 import { Button } from "./components/ui";
 import React, { useEffect } from "react";
 import ReactGA from "react-ga4";
@@ -10,6 +10,7 @@ import ModelInfo from "./components/ModelInfo";
 import ModelSelect from "./components/ModelSelect";
 import PaleoAgeInput from "./components/PaleoAgeInput";
 import ProjSelect from "./components/ProjSelect";
+import type { ModelList } from "./types";
 
 ReactGA.initialize("G-SK40RD0DHH");
 
@@ -19,24 +20,22 @@ export default function D3MapPage() {
   const [paleoAge, setPaleoAge] = React.useState(140);
   const [dirty, setDirty] = React.useState(false);
   const [refresh, setRefresh] = React.useState(false);
-  const [modelList, setModelList] = React.useState({});
+  const [modelList, setModelList] = React.useState<ModelList>({});
 
   useEffect(() => {
     const onResize = () => {
       setDirty(true);
     };
     window.addEventListener("resize", onResize);
-    d3.json("https://repo.gplates.org/webdav/pmm/models.json").then(function (
-      data: any
-    ) {
-      setModelList(data);
+    d3.json<ModelList>("https://repo.gplates.org/webdav/pmm/models.json").then(function (data) {
+      if (data) setModelList(data);
     });
     return () => {
       window.removeEventListener("resize", onResize);
     };
   }, []);
 
-  const projChangeHandler = (newProjName) => {
+  const projChangeHandler = (newProjName: string) => {
     if (newProjName != projName) {
       setProjName(newProjName);
       //setDirty(true);
@@ -44,7 +43,7 @@ export default function D3MapPage() {
     }
   };
 
-  const modelChangeHandler = (newModelName) => {
+  const modelChangeHandler = (newModelName: string) => {
     if (newModelName != modelName) {
       setModelName(newModelName);
       //setDirty(true);
@@ -52,7 +51,7 @@ export default function D3MapPage() {
     }
   };
 
-  const paleoAgeChangeHandler = (newAge) => {
+  const paleoAgeChangeHandler = (newAge: number) => {
     if (paleoAge != newAge) {
       setPaleoAge(newAge);
       //setDirty(true);
@@ -70,24 +69,19 @@ export default function D3MapPage() {
    */
   const handleDownloadButtonClicked = () => {
     const svgData = document.getElementById("map-svg");
+    if (!svgData) return;
     const svgString = new XMLSerializer().serializeToString(svgData);
-    let svgBlob = new Blob([svgString], {
+    const svgBlob = new Blob([svgString], {
       type: "image/svg+xml;charset=utf-8",
     });
-    let svgUrl = URL.createObjectURL(svgBlob);
-    let downloadLink = document.createElement("a");
+    const svgUrl = URL.createObjectURL(svgBlob);
+    const downloadLink = document.createElement("a");
     downloadLink.href = svgUrl;
     downloadLink.download = "paleomap.svg";
     document.body.appendChild(downloadLink);
     downloadLink.click();
     document.body.removeChild(downloadLink);
   };
-
-  let currentModelDesc = "";
-  let modelNameLowerCase = modelName.toLowerCase();
-  if (modelNameLowerCase in modelList) {
-    currentModelDesc = modelList[modelNameLowerCase]["description"];
-  }
 
   /*ReactGA.send({
     hitType: "pageview",
@@ -140,7 +134,7 @@ export default function D3MapPage() {
             >
               <span className="font-medium">Look Here!</span>{" "}
               <span style={{ fontFamily: "emoji" }}>⚠️⚠️⚠️</span>Click the
-              "Refresh Map" button to apply changes and redraw the map.
+              &quot;Refresh Map&quot; button to apply changes and redraw the map.
             </div>
           )}
           <div id="buttons-container">
@@ -157,7 +151,7 @@ export default function D3MapPage() {
       </div>
       <ModelInfo modelName={modelName} modelList={modelList} />
       <h2>
-        <a href="/">Back to home</a>
+        <Link href="/">Back to home</Link>
       </h2>
     </>
   );

@@ -13,22 +13,6 @@ const config = [
     },
   },
   {
-    // TEMPORARY: the Paleomap Maker files were ported from non-strict
-    // TypeScript and still carry @ts-nocheck. Typing them is #10, which
-    // removes this block.
-    files: ['src/app/map/**'],
-    rules: {
-      '@typescript-eslint/ban-ts-comment': 'off',
-      '@typescript-eslint/no-explicit-any': 'off',
-      '@typescript-eslint/no-unused-vars': 'off',
-      '@next/next/no-html-link-for-pages': 'off',
-      'prefer-const': 'off',
-      'no-var': 'off',
-      'react/no-unescaped-entities': 'off',
-      'react-hooks/exhaustive-deps': 'off',
-    },
-  },
-  {
     ignores: ['.next/**', 'out/**', 'node_modules/**', 'public/**', 'next-env.d.ts'],
   },
 ];

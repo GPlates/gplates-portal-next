@@ -1,18 +1,23 @@
-// @ts-nocheck -- ported from new-paleomap-maker (non-strict TS); TODO: add types and remove
 "use client";
 
 import React, { useEffect } from "react";
 
-const GCombobox = ({ allListItems, currentItem, setCurrentItem }) => {
-  const [listItems, setListItems] = React.useState([]);
+type GComboboxProps = {
+  allListItems: string[];
+  currentItem: string;
+  setCurrentItem: (item: string) => void;
+};
+
+const GCombobox = ({ allListItems, currentItem, setCurrentItem }: GComboboxProps) => {
+  const [listItems, setListItems] = React.useState<string[]>([]);
   const [showListFlag, setShowListFlag] = React.useState(false);
-  const inputRef = React.useRef(null);
+  const inputRef = React.useRef<HTMLInputElement>(null);
 
   /**
    * set initial value for the input element
    */
   useEffect(() => {
-    if (allListItems.length > 0 && inputRef.current.value == "") {
+    if (inputRef.current && allListItems.length > 0 && inputRef.current.value == "") {
       inputRef.current.value = allListItems[0];
     }
   }, [allListItems]);
@@ -21,23 +26,19 @@ const GCombobox = ({ allListItems, currentItem, setCurrentItem }) => {
    *
    * @param e
    */
-  const onInputChange = (e) => {
+  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.value.length == 0) {
       setListItems(allListItems);
     } else {
       setListItems(
-        listItems.filter((item: string) => {
+        listItems.filter((item) => {
           return item.startsWith(e.target.value);
         })
       );
     }
   };
 
-  /**
-   *
-   * @param e
-   */
-  const onInputFocus = (e) => {
+  const onInputFocus = () => {
     setShowListFlag(true);
     setListItems(allListItems);
   };
@@ -46,7 +47,7 @@ const GCombobox = ({ allListItems, currentItem, setCurrentItem }) => {
    *
    * @param e
    */
-  const onInputFocusOut = (e) => {
+  const onInputFocusOut = (e: React.FocusEvent<HTMLInputElement>) => {
     //setShowListFlag(false);
     if (allListItems.includes(e.target.value)) {
       setCurrentItem(e.target.value);
@@ -55,9 +56,9 @@ const GCombobox = ({ allListItems, currentItem, setCurrentItem }) => {
     }
   };
 
-  const handleItemOnClick = (item) => {
+  const handleItemOnClick = (item: string) => {
     setCurrentItem(item);
-    inputRef.current.value = item;
+    if (inputRef.current) inputRef.current.value = item;
     //console.log(item);
     setShowListFlag(false);
   };
@@ -66,8 +67,7 @@ const GCombobox = ({ allListItems, currentItem, setCurrentItem }) => {
     <div>
       <div
         className={`dropback ${showListFlag ? "" : "hidden"}`}
-        onClick={(e) => {
-          //console.log(e);
+        onClick={() => {
           setShowListFlag(false);
         }}
       ></div>
@@ -84,7 +84,7 @@ const GCombobox = ({ allListItems, currentItem, setCurrentItem }) => {
           aria-describedby="helper-text-explanation"
           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           onChange={(e) => onInputChange(e)}
-          onFocus={(e) => onInputFocus(e)}
+          onFocus={() => onInputFocus()}
           onBlur={(e) => onInputFocusOut(e)}
           //value={currentItem}
           required

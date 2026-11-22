@@ -1,4 +1,3 @@
-// @ts-nocheck -- ported from new-paleomap-maker (non-strict TS); TODO: add types and remove
 "use client";
 
 import * as d3 from "d3";
@@ -8,14 +7,23 @@ import ReactGA from "react-ga4";
 
 ReactGA.initialize("G-SK40RD0DHH");
 
-/**
- *
- * @param trees
- * @param name
- * @returns
- */
-const findSubTree = (root, name: string) => {
-  let ret = {};
+/** a node of public/json/timescale-gsa-0.6.json: an eon, era, period... */
+type TimescaleNode = {
+  name: string;
+  children: TimescaleNode[];
+  color?: string;
+  /** Ma */
+  begin?: number;
+  end?: number;
+  size?: number;
+  size_factor?: number;
+  value?: number;
+};
+
+type Cell = d3.HierarchyRectangularNode<TimescaleNode>;
+
+const findSubTree = (root: TimescaleNode, name: string) => {
+  let ret: TimescaleNode = root;
 
   depth_first_search(root, (node) => {
     if (node.name.toString() == name) {
@@ -28,50 +36,47 @@ const findSubTree = (root, name: string) => {
   return ret;
 };
 
-/**
- *
- * @param tree
- * @param callback
- */
-const depth_first_search = (tree, callback) => {
-  let ret = callback(tree);
+/** visit every node; returning false from the callback skips that node's subtree */
+const depth_first_search = (
+  tree: TimescaleNode,
+  callback: (node: TimescaleNode) => boolean
+) => {
+  const ret = callback(tree);
   if (!ret) {
     return;
   }
-  for (let i = 0; i < tree["children"].length; i++) {
-    depth_first_search(tree["children"][i], callback);
+  for (let i = 0; i < tree.children.length; i++) {
+    depth_first_search(tree.children[i], callback);
   }
 };
 
 /**
- *
- * @returns
+ * The geological timescale: a clickable icicle chart of the GSA timescale
+ * (drill into an eon, era or period; breadcrumbs to go back), and the GSA
+ * v0.6 chart split into four downloadable SVGs.
  */
 const TimescalePage = () => {
-  const timescaleContainerDiv = React.useRef(null);
-  const timescaleIcicleContainerDiv = React.useRef(null);
-  var timescaleData;
+  const timescaleContainerDiv = React.useRef<HTMLDivElement>(null);
+  const timescaleIcicleContainerDiv = React.useRef<HTMLDivElement>(null);
+  const timescaleData = React.useRef<TimescaleNode | null>(null);
 
-  /**
-   *
-   * @param data
-   */
-  const drawTimescalePlot = (data) => {
+  const drawTimescalePlot = (data: TimescaleNode) => {
+    const container = timescaleIcicleContainerDiv.current;
     //do not redraw the svg if it has already been done.
-    if (timescaleIcicleContainerDiv.current.querySelector("svg") != null) {
+    if (!container || container.querySelector("svg") != null) {
       return;
     }
 
-    var breadcrumbs = ["root"];
+    let breadcrumbs = ["root"];
 
-    let height = 600,
+    const height = 600,
       width = 240;
 
-    let paddingTop = 5,
+    const paddingTop = 5,
       paddingBottom = 5;
 
-    let svg = d3
-      .select(timescaleIcicleContainerDiv.current)
+    const svg = d3
+      .select(container)
       .append("svg")
       .attr("width", width)
       .attr("height", height + paddingBottom + paddingTop)
@@ -104,17 +109,14 @@ const TimescalePage = () => {
       .attr("fill-opacity", 1)
       .attr("fill", "lightgrey");
 
-    var gY = rightPanel.append("g").attr("class", "y-axis");
+    const gY = rightPanel.append("g").attr("class", "y-axis");
 
     // add breadcrumbs
     const gBreadcrumbs = leftPanel
       .append("g")
       .attr("class", "g-breadcrumbs")
       .attr("transform", "rotate(90) translate(20,-5)");
-    var breadcrumbsTxt = gBreadcrumbs.append("text");
-    /**
-     * update breadcrumbs
-     */
+    const breadcrumbsTxt = gBreadcrumbs.append("text");
     const updateBreadcrumbs = () => {
       breadcrumbsTxt.selectAll(".breadcrumbs").remove();
       for (let i = 0; i < breadcrumbs.length; i++) {
@@ -122,21 +124,23 @@ const TimescalePage = () => {
           .append("tspan")
           .attr("class", "breadcrumbs")
           .text(breadcrumbs[i])
-          .attr("text-decoration", (d) => {
+          .attr("text-decoration", () => {
             if (i < breadcrumbs.length - 1) {
               return "underline";
             } else {
               return "";
             }
           })
-          .style("cursor", (d) => {
+          .style("cursor", () => {
             if (i < breadcrumbs.length - 1) {
               return "pointer";
             } else {
               return "";
             }
           })
-          .on("click", (e) => breadcrumbsClicked(e.target.innerHTML));
+          .on("click", (e: MouseEvent) =>
+            breadcrumbsClicked((e.target as SVGTSpanElement).innerHTML)
+          );
         breadcrumbsTxt
           .append("tspan")
           .attr("class", "breadcrumbs")
@@ -166,12 +170,10 @@ const TimescalePage = () => {
       .append("g")
       .attr("class", "timescale-cells");
 
-    /**
-     *
-     * @param timescaleGroup
-     * @param _root
-     */
-    const update = (timescaleGroup, data) => {
+    const update = (
+      timescaleGroup: d3.Selection<SVGGElement, unknown, null, undefined>,
+      data: TimescaleNode
+    ) => {
       svg.selectAll(".timescale-cell").remove();
 
       // Compute the layout.
@@ -197,7 +199,7 @@ const TimescalePage = () => {
       });
 
       const _root = d3
-        .partition()
+        .partition<TimescaleNode>()
         .size([
           height,
           (hierarchy.height + 1) * (width - rightPanelWidth - leftPanelWidth),
@@ -205,41 +207,40 @@ const TimescalePage = () => {
 
       // add timescale cells.
       const cell = timescaleGroup
-        .selectAll(".timescale-cell")
+        .selectAll<SVGGElement, Cell>(".timescale-cell")
         .data(_root.descendants())
         .enter()
         .append("g")
         .attr("class", "timescale-cell")
         .attr(
           "transform",
-          (d: any) =>
+          (d) =>
             `translate(${d.y0 - width + rightPanelWidth + leftPanelWidth},${
               d.x0
             })`
         );
 
-      let domainArray = [],
-        rangeArray = [];
+      const domainArray: number[] = [],
+        rangeArray: number[] = [];
       cell
         .append("rect")
-        .attr("width", (d: any) => d.y1 - d.y0)
-        .attr("height", (d: any) => {
-          console.log(d);
+        .attr("width", (d) => d.y1 - d.y0)
+        .attr("height", (d) => {
           if (d.depth == 1) {
             if (rangeArray.length > 1 && domainArray.length > 1) {
               rangeArray.pop();
               domainArray.pop();
             }
             rangeArray.push(d.x0 + paddingTop);
-            domainArray.push(d.data.end);
+            domainArray.push(d.data.end!);
             rangeArray.push(d.x1 + paddingTop);
-            domainArray.push(d.data.begin);
+            domainArray.push(d.data.begin!);
           }
           return d.x1 - d.x0;
         })
         .attr("fill-opacity", 1)
-        .attr("fill", (d: any) => d.data.color)
-        .style("cursor", (d: any) => {
+        .attr("fill", (d) => d.data.color ?? null)
+        .style("cursor", (d) => {
           if (d.data.children.length) {
             return "pointer";
           } else {
@@ -248,34 +249,25 @@ const TimescalePage = () => {
         })
         .on("click", cellClicked);
 
-      let fontSize = Number(
+      const fontSize = Number(
         window
-          .getComputedStyle(cell.node())
+          .getComputedStyle(cell.node()!)
           .getPropertyValue("font-size")
-          .match(/\d+/)[0]
+          .match(/\d+/)![0]
       );
-      const text = cell
+      cell
         .append("text")
         .style("user-select", "none")
         .attr("pointer-events", "none")
-        .attr("x", (d: any) => (d.y1 - d.y0) / 2)
-        .attr("y", (d: any) => (d.x1 - d.x0 + fontSize) / 2)
+        .attr("x", (d) => (d.y1 - d.y0) / 2)
+        .attr("y", (d) => (d.x1 - d.x0 + fontSize) / 2)
         .attr("text-anchor", "middle")
-        .text((d: any) => d.data.name);
-      console.log(rangeArray);
-      console.log(domainArray);
+        .text((d) => d.data.name);
       updateYAxis(rangeArray, domainArray);
     };
 
-    /**
-     * timescale cell was clicked
-     * @param event
-     * @param node
-     */
-    function cellClicked(event, node) {
-      //console.log(event);
-      //console.log(node);
-
+    /** drill into a cell that has children */
+    function cellClicked(event: MouseEvent, node: Cell) {
       if (node.data.children.length > 0) {
         update(gTimescaleCells, node.data);
         breadcrumbs.push(node.data.name);
@@ -283,14 +275,11 @@ const TimescalePage = () => {
       }
     }
 
-    /**
-     * breadcrumbs was clicked
-     * @param name
-     */
-    function breadcrumbsClicked(name) {
-      let subtree = findSubTree(data, name);
+    /** go back up to an ancestor named in the breadcrumbs */
+    function breadcrumbsClicked(name: string) {
+      const subtree = findSubTree(data, name);
       update(gTimescaleCells, subtree);
-      let newBreadcrumbs = [];
+      const newBreadcrumbs: string[] = [];
       for (let i = 0; i < breadcrumbs.length; i++) {
         newBreadcrumbs.push(breadcrumbs[i]);
         if (name == breadcrumbs[i]) {
@@ -301,16 +290,16 @@ const TimescalePage = () => {
       updateBreadcrumbs();
     }
 
-    function updateYAxis(rangeArray, domainArray) {
-      var y = d3.scaleLinear().range(rangeArray);
+    function updateYAxis(rangeArray: number[], domainArray: number[]) {
+      const y = d3.scaleLinear().range(rangeArray);
       y.domain(domainArray);
       if (domainArray[domainArray.length - 1] > 4000) {
         domainArray.pop();
       }
-      var yAxis = d3
+      const yAxis = d3
         .axisRight(y)
         .tickValues(domainArray)
-        .tickFormat(d3.format(".2~f"));
+        .tickFormat((v) => d3.format(".2~f")(v));
       gY.call(yAxis);
     }
 
@@ -320,27 +309,29 @@ const TimescalePage = () => {
 
   useEffect(() => {
     //draw the time scale icicle
-    let svgIcicleContainer = d3.select(timescaleIcicleContainerDiv.current);
-    d3.json("/json/timescale-gsa-0.6.json")
+    d3.json<TimescaleNode>("/json/timescale-gsa-0.6.json")
       .then((data) => {
-        timescaleData = data;
+        if (!data) return;
+        timescaleData.current = data;
         drawTimescalePlot(data);
       })
       .catch((e) => console.log(e));
 
     //draw GSA time scale v0.6....
-    let svgContainer = d3.select(timescaleContainerDiv.current);
+    const containerEl = timescaleContainerDiv.current;
+    if (!containerEl) return;
+    const svgContainer = d3.select(containerEl);
     d3.xml("/svg/timescl.svg").then((data) => {
-      if (timescaleContainerDiv.current.querySelector("svg") == null) {
-        svgContainer.node().append(data.documentElement);
-        let oldSVG = svgContainer.select("svg");
+      if (containerEl.querySelector("svg") == null) {
+        containerEl.append(data.documentElement);
+        const oldSVG = svgContainer.select<SVGSVGElement>("svg");
 
-        let ids = ["cenozoic", "mesozoic", "paleozoic", "precambrian"];
-        let xTranlate = [-38, -232, -421, -582.5];
-        let xWidth = [190, 185, 156, 170.5];
+        const ids = ["cenozoic", "mesozoic", "paleozoic", "precambrian"];
+        const xTranlate = [-38, -232, -421, -582.5];
+        const xWidth = [190, 185, 156, 170.5];
 
         for (let i = 0; i < ids.length; i++) {
-          let newSVG = svgContainer
+          const newSVG = svgContainer
             .append("svg")
             .attr("width", xWidth[i])
             .attr("height", "463")
@@ -354,21 +345,18 @@ const TimescalePage = () => {
             .attr("height", "463")
             .attr("fill", "white");
 
-          let group = newSVG
+          const group = newSVG
             .append("g")
             .attr("transform", "translate(" + xTranlate[i] + ", -60)");
 
-          var bigNode: any = oldSVG.select("#" + ids[i]).node();
-          var bigBbox = bigNode.getBoundingClientRect();
+          // copy the paths and labels that fall inside this era's box
+          const bigNode = oldSVG.select<SVGGraphicsElement>("#" + ids[i]).node()!;
+          const bigBbox = bigNode.getBoundingClientRect();
 
-          let allPath = oldSVG.selectAll("path");
+          const allPath = oldSVG.selectAll<SVGPathElement, unknown>("path");
 
-          allPath.each(function (d, i) {
-            let node: any = d3.select(this).node();
-            let bbox = node.getBoundingClientRect();
-            if (bbox.width > 200) {
-              console.log(node);
-            }
+          allPath.each(function () {
+            const bbox = this.getBoundingClientRect();
             if (
               bbox.x > bigBbox.x - 1 &&
               bbox.x < bigBbox.x + bigBbox.width + 1 &&
@@ -379,10 +367,9 @@ const TimescalePage = () => {
             }
           });
 
-          let allText = oldSVG.selectAll("text");
-          allText.each(function (d, i) {
-            let node: any = d3.select(this).node();
-            let bbox = node.getBoundingClientRect();
+          const allText = oldSVG.selectAll<SVGTextElement, unknown>("text");
+          allText.each(function () {
+            const bbox = this.getBoundingClientRect();
             if (bbox.width > 200) {
               group.append(() => d3.select(this).clone(true).node());
             } else if (
@@ -398,22 +385,18 @@ const TimescalePage = () => {
       }
     });
 
-    return () => {};
+    // runs once
   }, []);
 
-  /**
-   *
-   * @param name
-   */
-  const handleDownloadButtonClicked = (name) => {
+  const handleDownloadButtonClicked = (name: string) => {
     const svgData = document.getElementById(name + "-svg");
-    //console.log(svgData);
+    if (!svgData) return;
     const svgString = new XMLSerializer().serializeToString(svgData);
-    let svgBlob = new Blob([svgString], {
+    const svgBlob = new Blob([svgString], {
       type: "image/svg+xml;charset=utf-8",
     });
-    let svgUrl = URL.createObjectURL(svgBlob);
-    let downloadLink = document.createElement("a");
+    const svgUrl = URL.createObjectURL(svgBlob);
+    const downloadLink = document.createElement("a");
     downloadLink.href = svgUrl;
     downloadLink.download = name + ".svg";
     document.body.appendChild(downloadLink);
@@ -421,13 +404,10 @@ const TimescalePage = () => {
     document.body.removeChild(downloadLink);
   };
 
-  /**
-   *
-   */
   const downloadJSON = () => {
-    var a = document.createElement("a");
+    const a = document.createElement("a");
     a.href = URL.createObjectURL(
-      new Blob([JSON.stringify(timescaleData)], { type: "application/json" })
+      new Blob([JSON.stringify(timescaleData.current)], { type: "application/json" })
     );
     a.download = "timescale-gsa-v0.6.json";
     a.click();

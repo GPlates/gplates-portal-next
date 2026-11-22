@@ -1,4 +1,3 @@
-// @ts-nocheck -- ported from new-paleomap-maker (non-strict TS); TODO: add types and remove
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -10,6 +9,7 @@ import { drawGraticule } from "../functions/drawGraticule";
 import { getProjection } from "../functions/getProjection";
 import { setupDrag } from "../functions/setupDrag";
 import { setupZoom } from "../functions/setupZoom";
+import { MapProjection, isReady } from "../types";
 
 interface D3SVGPros {
   paleoAge: number;
@@ -18,45 +18,39 @@ interface D3SVGPros {
   refresh: boolean;
 }
 
-/**
- *
- * @param {*} param0
- * @returns
- */
+/** the map itself: coastlines, graticule and cities for one model and age */
 const D3SVG: React.FC<D3SVGPros> = ({
   paleoAge,
   projName,
   modelName,
   refresh,
 }: D3SVGPros) => {
-  const d3SVGRef = React.useRef(null);
+  const d3SVGRef = React.useRef<SVGSVGElement>(null);
 
-  const [projection, setProjection] = useState({
+  const [projection, setProjection] = useState<MapProjection>({
     name: null,
     proj: null,
   });
 
+  // The page flips `refresh` whenever the projection, model or age changes.
+  // A new projection is sized from the SVG on screen, so it has to be built
+  // here after layout rather than during render.
   useEffect(() => {
+    const svgEl = d3SVGRef.current;
+    if (!svgEl) return;
     setProjection({
       name: projName,
-      proj: getProjection(
-        projName,
-        d3SVGRef.current.clientHeight,
-        d3SVGRef.current.clientWidth
-      ),
+      proj: getProjection(projName, svgEl.clientHeight, svgEl.clientWidth),
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refresh]);
 
   useEffect(() => {
-    let svg = d3.select(d3SVGRef.current);
-    svg
-      .transition()
-      .tween(
-        "resize",
-        window.ResizeObserver ? null : () => () => svg.dispatch("toggle")
-      );
-    svg.attr("width", d3SVGRef.current.clientWidth);
-    svg.attr("height", d3SVGRef.current.clientHeight);
+    const svgEl = d3SVGRef.current;
+    if (!svgEl) return;
+    const svg = d3.select(svgEl);
+    svg.attr("width", svgEl.clientWidth);
+    svg.attr("height", svgEl.clientHeight);
     svg
       .append("rect")
       .attr("width", "100%")
@@ -64,9 +58,11 @@ const D3SVG: React.FC<D3SVGPros> = ({
       .attr("fill", "white");
   }, []);
 
+  // draw everything for the new projection; paleoAge and modelName changes
+  // always arrive together with a new projection (see above)
   useEffect(() => {
-    if (projection.name == null || projection.proj == null) {
-      return () => {};
+    if (!isReady(projection)) {
+      return;
     }
     setupDrag(d3SVGRef, projection);
 
@@ -76,6 +72,7 @@ const D3SVG: React.FC<D3SVGPros> = ({
       drawGraticule(d3SVGRef, projection);
       drawCities(d3SVGRef, paleoAge, projection, modelName);
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projection]);
 
   return (

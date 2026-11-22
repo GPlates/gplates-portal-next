@@ -1,33 +1,43 @@
-// @ts-nocheck -- ported from new-paleomap-maker (non-strict TS); TODO: add types and remove
 import * as d3 from "d3";
+import {
+  CirclePointDatum,
+  LabelDatum,
+  MapProjection,
+  PathPointDatum,
+  SvgRef,
+  isReady,
+  projectX,
+  projectY,
+} from "../types";
 
-export const setupZoom = (svgRef, projection) => {
-  if (projection.name == null || projection.proj == null) {
+/** wheel/pinch zoom: rescale the projection and re-project everything drawn */
+export const setupZoom = (svgRef: SvgRef, projection: MapProjection) => {
+  const svgEl = svgRef.current;
+  if (!isReady(projection) || !svgEl) {
     return;
   }
-  let svg = d3.select(svgRef.current);
-  let svgHeight = svgRef.current.clientHeight,
-    svgWidth = svgRef.current.clientWidth;
+  const { name, proj } = projection;
+  const svg = d3.select(svgEl);
+  const svgWidth = svgEl.clientWidth;
 
-  let scale0;
-  if (projection.name.toLowerCase() != "orthographic") {
+  let scale0: number;
+  if (name.toLowerCase() != "orthographic") {
     scale0 = (svgWidth - 1) / 2 / Math.PI;
   } else {
     scale0 = (svgWidth - 40) / 4;
   }
 
-  var zoom = d3.zoom().on("zoom", function (event, d) {
-    //console.log(event);
+  const zoom = d3.zoom<SVGSVGElement, unknown>().on("zoom", function (event) {
     if (event.transform.k > 0.5) {
-      projection.proj.scale(scale0 * event.transform.k);
-      let path = d3.geoPath().projection(projection.proj);
-      svg.selectAll(".coastline").attr("d", path);
-      svg.selectAll(".graticule").attr("d", path);
+      proj.scale(scale0 * event.transform.k);
+      const path = d3.geoPath().projection(proj);
+      svg.selectAll<SVGPathElement, d3.GeoPermissibleObjects>(".coastline").attr("d", path);
+      svg.selectAll<SVGPathElement, d3.GeoPermissibleObjects>(".graticule").attr("d", path);
 
-      if (projection.name.toLowerCase() == "orthographic") {
+      if (name.toLowerCase() == "orthographic") {
         //keep the size of points in a globe projection
-        svg.selectAll(".path-point").attr("d", function (d) {
-          return d3.geoPath().projection(projection.proj)(
+        svg.selectAll<SVGPathElement, PathPointDatum>(".path-point").attr("d", function (d) {
+          return d3.geoPath().projection(proj)(
             d3
               .geoCircle()
               .center([d[0], d[1]])
@@ -38,24 +48,16 @@ export const setupZoom = (svgRef, projection) => {
       } else {
         // move the points to new locations after zooming in a rectangular projection
         svg
-          .selectAll(".circle-point")
-          .attr("cx", function (d) {
-            return projection.proj(d)[0];
-          })
-          .attr("cy", function (d) {
-            return projection.proj(d)[1];
-          });
+          .selectAll<SVGCircleElement, CirclePointDatum>(".circle-point")
+          .attr("cx", (d) => projectX(proj, d))
+          .attr("cy", (d) => projectY(proj, d));
       }
 
       //move the point labels to the new locations
       svg
-        .selectAll(".point-label")
-        .attr("x", function (d) {
-          return projection.proj(d)[0];
-        })
-        .attr("y", function (d) {
-          return projection.proj(d)[1];
-        });
+        .selectAll<SVGTextElement, LabelDatum>(".point-label")
+        .attr("x", (d) => projectX(proj, d))
+        .attr("y", (d) => projectY(proj, d));
     }
   });
 

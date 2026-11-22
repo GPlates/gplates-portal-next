@@ -4,9 +4,9 @@ export const getProjection = (
   projectionName: string,
   svgHeight: number,
   svgWidth: number
-) => {
+): d3.GeoProjection => {
   if (projectionName.toLowerCase() == "orthographic") {
-    let oScale0 = (svgWidth - 40) / 4;
+    const oScale0 = (svgWidth - 40) / 4;
     return d3
       .geoOrthographic()
       .scale(oScale0)
@@ -14,7 +14,7 @@ export const getProjection = (
       .clipAngle(90)
       .precision(0.1);
   } else {
-    let eScale0 = (svgWidth - 1) / 2 / Math.PI;
+    const eScale0 = (svgWidth - 1) / 2 / Math.PI;
     return d3
       .geoEquirectangular()
       .scale(eScale0)

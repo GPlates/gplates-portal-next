@@ -1,5 +1,9 @@
-// @ts-nocheck -- ported from new-paleomap-maker (non-strict TS); TODO: add types and remove
-const ProjSelect = ({ projName, projChangeHandler }) => {
+type ProjSelectProps = {
+  projName: string;
+  projChangeHandler: (projName: string) => void;
+};
+
+const ProjSelect = ({ projName, projChangeHandler }: ProjSelectProps) => {
   return (
     <div className="proj-select">
       <label
