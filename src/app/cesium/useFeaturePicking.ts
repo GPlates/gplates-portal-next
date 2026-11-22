@@ -31,11 +31,18 @@ export function useFeaturePicking(
   const [selected, setSelected] = useState<PickableFeature | null>(null);
   const [ridgeFilter, setRidgeFilter] = useState<RidgeFilter>(DEFAULT_RIDGE_FILTER);
 
-  // (re)load the layer whenever the view changes
-  useEffect(() => {
+  // a new view starts with nothing selected or listed and the default filter;
+  // reset while rendering rather than in an effect, so there's no stale frame
+  const [prevCfg, setPrevCfg] = useState(cfg);
+  if (cfg !== prevCfg) {
+    setPrevCfg(cfg);
     setSelected(null);
     setNamed([]);
     setRidgeFilter(DEFAULT_RIDGE_FILTER);
+  }
+
+  // (re)load the layer whenever the view changes
+  useEffect(() => {
     const viewer = viewerRef.current;
     if (!viewer || !cfg) return;
 
@@ -68,9 +75,15 @@ export function useFeaturePicking(
     [cfg, ridgeFilter],
   );
 
+  // a filter change that hides the selected feature deselects it
+  const [prevIsVisible, setPrevIsVisible] = useState(() => isVisible);
+  if (isVisible !== prevIsVisible) {
+    setPrevIsVisible(() => isVisible);
+    if (selected && !isVisible(selected)) setSelected(null);
+  }
+
   useEffect(() => {
     layerRef.current?.setVisible(isVisible);
-    setSelected((current) => (current && !isVisible(current) ? null : current));
   }, [named, isVisible]);
 
   useEffect(() => {
@@ -82,6 +95,7 @@ export function useFeaturePicking(
     const viewer = viewerRef.current;
     if (!viewer || !cfg) return;
 
+    const tooltipEl = tooltipRef.current;
     let handler: CesiumNS.ScreenSpaceEventHandler | null = null;
     let frame = 0;
     let pointer: CesiumNS.Cartesian2 | null = null;
@@ -121,7 +135,7 @@ export function useFeaturePicking(
     return () => {
       cancelAnimationFrame(frame);
       if (handler && !handler.isDestroyed()) handler.destroy();
-      if (tooltipRef.current) tooltipRef.current.hidden = true;
+      if (tooltipEl) tooltipEl.hidden = true;
       canvas.style.cursor = '';
     };
   }, [viewerRef, viewerReady, cfg]);

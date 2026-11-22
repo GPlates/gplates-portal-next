@@ -32,11 +32,21 @@ export function useRiftPoints(
   const [error, setError] = useState<string | null>(null);
   const [selected, setSelected] = useState<RiftPoint | null>(null);
 
+  // a new view starts unloaded with nothing selected, and a new frame drops
+  // the selection with the frame it belonged to. Reset while rendering rather
+  // than in an effect, so there's no stale frame.
+  const [prev, setPrev] = useState({ cfg, time });
+  if (cfg !== prev.cfg || time !== prev.time) {
+    setPrev({ cfg, time });
+    setSelected(null);
+    if (cfg !== prev.cfg) {
+      setReady(false);
+      setError(null);
+    }
+  }
+
   // load the dataset and build the layer whenever the view changes
   useEffect(() => {
-    setSelected(null);
-    setReady(false);
-    setError(null);
     const viewer = viewerRef.current;
     if (!viewer || !cfg) return;
 
@@ -63,10 +73,9 @@ export function useRiftPoints(
     };
   }, [viewerRef, viewerReady, cfg]);
 
-  // show the frame's points, and drop any selection with the frame it belonged to
+  // show the frame's points
   useEffect(() => {
     layerRef.current?.setFrame(time);
-    setSelected(null);
   }, [ready, time]);
 
   useEffect(() => {

@@ -94,7 +94,17 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
   const terrain = terrainName === TERRAIN_NONE ? null : view.terrains[terrainName];
   const hasTerrains = Object.keys(view.terrains).length > 0;
 
-  const picking = useFeaturePicking(viewerRef, viewerReady, view.features);
+  // destructured: the hook's result carries a ref, and reading any field of
+  // an object holding a ref during render trips react-hooks/refs
+  const {
+    tooltipRef: pickingTooltipRef,
+    selected: pickedFeature,
+    setSelected: setPickedFeature,
+    listed: listedFeatures,
+    ridgeFilter,
+    setRidgeFilter,
+    flyTo: flyToFeature,
+  } = useFeaturePicking(viewerRef, viewerReady, view.features);
   useRasterQuery(viewerRef, viewerReady, view.rasterQuery, rasterName);
   const rift = useRiftPoints(viewerRef, viewerReady, view.riftPoints, time);
   const colorBar = view.animation ? view.animation.colorBar : raster?.colorBar;
@@ -195,7 +205,6 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
     };
     // the viewer is only created once; view/raster/terrain/height-scale changes
     // are applied by the effects below via the live viewerRef
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // swap the imagery layer whenever the view, raster or reconstruction time changes
@@ -221,7 +230,6 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
     while (staleLayersRef.current.length > 3) {
       viewer.imageryLayers.remove(staleLayersRef.current.shift()!, true);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [viewerReady, rasterName, raster, view.time, view.animation, time]);
 
   // swap the terrain provider whenever the view, terrain or height scale changes
@@ -413,11 +421,11 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
 
         {view.features?.ridgeFilter && (
           <RidgesPanel
-            filter={picking.ridgeFilter}
-            onFilterChange={picking.setRidgeFilter}
-            ridges={picking.listed}
-            selected={picking.selected}
-            onPick={picking.flyTo}
+            filter={ridgeFilter}
+            onFilterChange={setRidgeFilter}
+            ridges={listedFeatures}
+            selected={pickedFeature}
+            onPick={flyToFeature}
           />
         )}
       </div>
@@ -537,11 +545,11 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
           )}
         </div>
 
-        {view.features && picking.selected && (
+        {view.features && pickedFeature && (
           <FeatureInfoPanel
-            feature={picking.selected}
+            feature={pickedFeature}
             cfg={view.features}
-            onClose={() => picking.setSelected(null)}
+            onClose={() => setPickedFeature(null)}
           />
         )}
 
@@ -579,7 +587,7 @@ export function CesiumRasterTerrainViewer({ initialView }: { initialView: ViewNa
       )}
 
       <span ref={coordsRef} className="cesium-view-coordinates" />
-      <div ref={picking.tooltipRef} className="cesium-view-tooltip" hidden />
+      <div ref={pickingTooltipRef} className="cesium-view-tooltip" hidden />
     </div>
   );
 }

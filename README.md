@@ -11,6 +11,8 @@ npm run dev
 
 Open http://localhost:3000
 
+Before pushing, run `npm run lint` and `npm run typecheck`; CI runs both plus `npm run build` on every pull request.
+
 ## Notes
 
 - This project is intentionally isolated from the legacy Django repo.

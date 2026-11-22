@@ -72,7 +72,11 @@ export function RiftChart({
 
   const [domain, setDomain] = useState(extents);
   // a different point resets the view, the way reopening the old dialog did
-  useEffect(() => setDomain(extents), [extents]);
+  const [prevExtents, setPrevExtents] = useState(extents);
+  if (extents !== prevExtents) {
+    setPrevExtents(extents);
+    setDomain(extents);
+  }
 
   // the old x scale mapped the domain onto [plotWidth, 0] -- oldest on the left
   const xOf = (x: number) => plotWidth - scale(x, domain.x, plotWidth);

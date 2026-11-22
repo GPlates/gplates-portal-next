@@ -85,7 +85,9 @@ export function D3DemoMap({ view }: { view: DemoView }) {
    * closing over the state
    */
   const projNameRef = useRef(projName);
-  projNameRef.current = projName;
+  useEffect(() => {
+    projNameRef.current = projName;
+  }, [projName]);
   const zoomRef = useRef<d3.ZoomBehavior<SVGSVGElement, unknown> | null>(null);
   const [time, setTime] = useState('140');
   const [timeLabel, setTimeLabel] = useState('140');
@@ -329,6 +331,10 @@ export function D3DemoMap({ view }: { view: DemoView }) {
 
   /* initial load, as the old page did on $(document).ready */
   useEffect(() => {
+    // Fetching on mount is what effects are for; the rule objects only
+    // because refresh() also sets the time label synchronously, which is
+    // already that value on first render.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     void refresh();
     // only on mount -- afterwards the Refresh Map button drives it
     // eslint-disable-next-line react-hooks/exhaustive-deps

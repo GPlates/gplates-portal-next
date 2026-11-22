@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 export function SiteHeader() {
@@ -31,9 +32,9 @@ export function SiteHeader() {
       <nav className="legacy-navbar" aria-label="Main navigation">
         <div className="container legacy-nav-inner">
           <div className="brand-wrap">
-            <a href="/" className="brand-link" aria-label="GPlates Portal home">
+            <Link href="/" className="brand-link" aria-label="GPlates Portal home">
               <img src="/img/gplates-portal-banner.png" alt="GPlates Portal" />
-            </a>
+            </Link>
           </div>
 
           <div className="nav-menu-wrap">
@@ -53,9 +54,9 @@ export function SiteHeader() {
                   <a href="https://www.gplates.org">www.GPlates.org</a>
                   <a href="https://www.earthbyte.org">www.EarthByte.org</a>
                   <a href="https://discourse.gplates.org">Community Forum</a>
-                  <a href="/#apps">Applications</a>
-                  <a href="/#people">People</a>
-                  <a href="/#sponsors-hr">Sponsors</a>
+                  <Link href="/#apps">Applications</Link>
+                  <Link href="/#people">People</Link>
+                  <Link href="/#sponsors-hr">Sponsors</Link>
                 </div>
               </div>
 

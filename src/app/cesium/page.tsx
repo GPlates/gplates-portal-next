@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { CesiumRasterTerrainViewer } from './CesiumRasterTerrainViewer';
 import { DEFAULT_VIEW, resolveViewName } from './viewConfigs';
 import './page.css';
@@ -21,7 +22,7 @@ export default async function CesiumPage({
     return (
       <main className="cesium-view-fallback">
         <p>The &quot;{requested}&quot; 3D view is not available yet.</p>
-        <a href="/">Back to the portal</a>
+        <Link href="/">Back to the portal</Link>
       </main>
     );
   }
