@@ -1,7 +1,7 @@
-// @ts-nocheck -- ported from new-paleomap-maker (non-strict TS); TODO: add types and remove
 "use client";
 
 import * as d3 from "d3";
+import Link from "next/link";
 import { Button } from "../components/ui";
 import React, { useEffect } from "react";
 import ReactGA from "react-ga4";
@@ -10,89 +10,36 @@ import ModelInfo from "../components/ModelInfo";
 import ModelSelect from "../components/ModelSelect";
 import PaleoAgeInput from "../components/PaleoAgeInput";
 import { useDrawR12nTree } from "../hooks/useDrawR12nTree";
+import type { ModelList } from "../types";
 
 ReactGA.initialize("G-SK40RD0DHH");
 
 const aspectRatio = [16, 9];
 
-/**
- *
- * @returns
- */
+/** the reconstruction tree: which plate moves relative to which, at a time */
 export default function R12nTreePage() {
   const [modelName, setModelName] = React.useState("Cao2024");
   const [paleoAge, setPaleoAge] = React.useState(140);
   const [dirty, setDirty] = React.useState(false);
   const [refresh, setRefresh] = React.useState(false);
-  const [modelList, setModelList] = React.useState({});
+  const [modelList, setModelList] = React.useState<ModelList>({});
   const [rootPID, setRootPID] = React.useState("0");
-  const [allPIDs, setAllPIDs] = React.useState([]);
+  const [allPIDs, setAllPIDs] = React.useState<string[]>([]);
   const [maxPID, setMaxPID] = React.useState(999);
 
-  const d3R12nTreeSVGRef = React.useRef(null);
-  const maxPidInputRef = React.useRef(null);
+  const d3R12nTreeSVGRef = React.useRef<SVGSVGElement>(null);
+  const maxPidInputRef = React.useRef<HTMLInputElement>(null);
 
-  /**
-   *
-   * @param node
-   * @param edges
-   * @returns
-   */
-  const getChildren = (node, edges) => {
-    let children = [];
-    for (let i in edges) {
-      if (edges[i][0] == node) {
-        children.push(edges[i][1]);
-      }
-    }
-    let ret = [];
-    for (let i in children) {
-      ret.push({
-        name: children[i],
-        children: getChildren(children[i], edges),
-      });
-    }
-    return ret;
-  };
-
-  /**
-   * given a set of "tree edges", find the "root".
-   * the "root" does not have a parent
-   *
-   * @param edges
-   * @returns
-   */
-  const findRoots = (edges) => {
-    let parents = [],
-      children = [];
-    for (let i in edges) {
-      parents.push(edges[i][0]);
-      children.push(edges[i][1]);
-    }
-    const parentsSet = new Set(parents);
-    const childrenSet = new Set(children);
-
-    const roots = Array.from(parentsSet).filter((element) => {
-      return !childrenSet.has(element);
-    });
-    return roots;
-  };
-
-  /**
-   *
-   */
   useEffect(() => {
     const onResize = () => {
       setDirty(true);
     };
     window.addEventListener("resize", onResize);
-    d3.json("https://repo.gplates.org/webdav/pmm/models.json").then(function (
-      data: any
-    ) {
-      setModelList(data);
+    d3.json<ModelList>("https://repo.gplates.org/webdav/pmm/models.json").then(function (data) {
+      if (data) setModelList(data);
     });
 
-    maxPidInputRef.current.value = 999;
+    if (maxPidInputRef.current) maxPidInputRef.current.value = "999";
 
     return () => {
       window.removeEventListener("resize", onResize);
@@ -108,14 +55,14 @@ export default function R12nTreePage() {
     maxPID
   );
 
-  const modelChangeHandler = (newModelName) => {
+  const modelChangeHandler = (newModelName: string) => {
     if (newModelName != modelName) {
       setModelName(newModelName);
       setDirty(true);
     }
   };
 
-  const paleoAgeChangeHandler = (newAge) => {
+  const paleoAgeChangeHandler = (newAge: number) => {
     if (paleoAge != newAge) {
       setPaleoAge(newAge);
       setDirty(true);
@@ -128,13 +75,14 @@ export default function R12nTreePage() {
   };
 
   const onMaxPidInputFocusOut = () => {
-    let value = parseInt(maxPidInputRef.current.value);
+    const raw = maxPidInputRef.current?.value ?? "";
+    const value = parseInt(raw);
     if (Number.isNaN(value)) {
-      alert("Invalid Max Plate ID: " + maxPidInputRef.current.value);
+      alert("Invalid Max Plate ID: " + raw);
     } else if (value < parseInt(rootPID)) {
       alert("Max Plate ID cannot be less than the current Root Plate ID.");
     } else {
-      setMaxPID(maxPidInputRef.current.value);
+      setMaxPID(value);
     }
   };
 
@@ -190,7 +138,7 @@ export default function R12nTreePage() {
               id="max-pid-input"
               aria-describedby="helper-text-explanation"
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              onBlur={(e) => onMaxPidInputFocusOut()}
+              onBlur={() => onMaxPidInputFocusOut()}
               required
             />
           </div>
@@ -209,8 +157,8 @@ export default function R12nTreePage() {
               className="p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300"
               role="alert"
             >
-              <span className="font-medium">Look Here!</span> Click the "Refresh
-              Map" button to apply changes and redraw the map.
+              <span className="font-medium">Look Here!</span> Click the &quot;Refresh
+              Map&quot; button to apply changes and redraw the map.
             </div>
           )}
         </div>
@@ -220,6 +168,7 @@ export default function R12nTreePage() {
         <a
           href="https://github.com/GPlates/gplates-web-service/blob/master/django/GWS/data/earth/Muller_etal_2019_plateID_list.csv"
           target="_blank"
+          rel="noreferrer"
           style={{
             textDecoration: "underline",
             textDecorationColor: "blue",
@@ -232,7 +181,7 @@ export default function R12nTreePage() {
       </div>
       <ModelInfo modelName={modelName} modelList={modelList} />
       <h2>
-        <a href="/">Back to home</a>
+        <Link href="/">Back to home</Link>
       </h2>
     </>
   );

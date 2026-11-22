@@ -1,9 +1,14 @@
-// @ts-nocheck -- ported from new-paleomap-maker (non-strict TS); TODO: add types and remove
+import type { ModelList } from "../types";
 import { List } from "./ui";
 
-const ModelInfo = ({ modelName, modelList }) => {
+type ModelInfoProps = {
+  modelName: string;
+  modelList: ModelList;
+};
+
+const ModelInfo = ({ modelName, modelList }: ModelInfoProps) => {
   let currentModelDesc = "";
-  let modelNameLowerCase = modelName.toLowerCase();
+  const modelNameLowerCase = modelName.toLowerCase();
   if (modelNameLowerCase in modelList) {
     currentModelDesc = modelList[modelNameLowerCase]["description"];
   }

@@ -1,5 +1,9 @@
-// @ts-nocheck -- ported from new-paleomap-maker (non-strict TS); TODO: add types and remove
-const ModelSelect = ({ modelName, modelChangeHandler }) => {
+type ModelSelectProps = {
+  modelName: string;
+  modelChangeHandler: (modelName: string) => void;
+};
+
+const ModelSelect = ({ modelName, modelChangeHandler }: ModelSelectProps) => {
   return (
     <div className="model-select">
       <label

@@ -1,33 +1,36 @@
-// @ts-nocheck -- ported from new-paleomap-maker (non-strict TS); TODO: add types and remove
 import * as d3 from "d3";
+import {
+  CirclePointDatum,
+  LabelDatum,
+  MapProjection,
+  PathPointDatum,
+  projectX,
+  projectY,
+} from "../types";
 
 /**
- *
- * @param layer
- * @param lon
- * @param lat
- * @param projection
+ * Draw a point and its label into a layer: a small circle polygon on the
+ * globe (so it is clipped on the far side), an SVG circle on a flat map.
  */
 export const drawPoint = (
-  layer,
-  projection,
+  layer: d3.Selection<SVGGElement, unknown, null, undefined>,
+  projection: MapProjection,
   lon: number,
   lat: number,
   label: string = "",
   radius: number = 1,
   className: string = ""
 ) => {
-  let proj = projection.proj;
-  let projName = projection.name;
+  const proj = projection.proj;
+  const projName = projection.name;
 
   if (proj == null || projName == null) {
     return;
   }
-  //console.log(projection);
   if (projName.toLowerCase() == "orthographic") {
     layer
       .append("path")
-      .datum([lon, lat, radius])
+      .datum<PathPointDatum>([lon, lat, radius])
       .attr("d", function (d) {
         return d3.geoPath().projection(proj)(
           d3.geoCircle().center([d[0], d[1]]).radius(d[2]).precision(10)()
@@ -36,22 +39,15 @@ export const drawPoint = (
       .attr("class", "path-point " + className)
       .append("svg:title")
       .text(function (d) {
-        //console.log(d);
         return "Longitude: " + d[0] + "\nLatitude: " + d[1];
       });
   } else {
     layer
       .append("circle")
-      .datum([lon, lat])
-      .attr("cx", function (d) {
-        return proj(d)[0];
-      })
-      .attr("cy", function (d) {
-        return proj(d)[1];
-      })
-      .attr("r", function (d) {
-        return 5;
-      })
+      .datum<CirclePointDatum>([lon, lat])
+      .attr("cx", (d) => projectX(proj, d))
+      .attr("cy", (d) => projectY(proj, d))
+      .attr("r", 5)
       .style("fill", "blue")
       .attr("class", "circle-point " + className)
       .append("svg:title")
@@ -63,13 +59,9 @@ export const drawPoint = (
   // add point label
   layer
     .append("text")
-    .datum([lon, lat, label])
-    .attr("x", function (d) {
-      return proj(d)[0];
-    })
-    .attr("y", function (d) {
-      return proj(d)[1];
-    })
+    .datum<LabelDatum>([lon, lat, label])
+    .attr("x", (d) => projectX(proj, d))
+    .attr("y", (d) => projectY(proj, d))
     .text(function (d) {
       return d[2];
     })

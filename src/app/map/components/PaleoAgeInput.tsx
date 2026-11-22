@@ -1,12 +1,16 @@
-// @ts-nocheck -- ported from new-paleomap-maker (non-strict TS); TODO: add types and remove
 import React, { useEffect } from "react";
 
-const PaleoAgeInput = ({ paleoAge, paleoAgeChangeHandler }) => {
-  const inputRef = React.useRef(null);
+type PaleoAgeInputProps = {
+  paleoAge: number;
+  paleoAgeChangeHandler: (paleoAge: number) => void;
+};
 
-  //console.log(allListItems);
+const PaleoAgeInput = ({ paleoAge, paleoAgeChangeHandler }: PaleoAgeInputProps) => {
+  const inputRef = React.useRef<HTMLInputElement>(null);
+
+  // uncontrolled, so typing isn't fought by re-renders; synced when the age changes
   useEffect(() => {
-    inputRef.current.value = paleoAge;
+    if (inputRef.current) inputRef.current.value = String(paleoAge);
   }, [paleoAge]);
 
   return (

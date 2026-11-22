@@ -1,25 +1,24 @@
-// @ts-nocheck -- ported from new-paleomap-maker (non-strict TS); TODO: add types and remove
 import * as d3 from "d3";
 import { GWS_URL } from "../../../lib/gws";
+import { MapProjection, SvgRef, isReady } from "../types";
+
 /**
- *
- * @param svgRef
- * @param paleoAge
- * @param projection
- * @param modelName
+ * Fetch the reconstructed coastlines for a time and model from GWS and draw
+ * them, replacing any already drawn. Hovering a coastline highlights it.
  */
 export const drawCoastlines = async (
-  svgRef,
-  paleoAge,
-  projection,
-  modelName
+  svgRef: SvgRef,
+  paleoAge: number,
+  projection: MapProjection,
+  modelName: string
 ) => {
-  let svg = d3.select(svgRef.current);
-  var path = d3.geoPath().projection(projection.proj);
+  if (!isReady(projection) || !svgRef.current) return;
+  const svg = d3.select(svgRef.current);
+  const path = d3.geoPath().projection(projection.proj);
   svg.selectAll(".coastlines").remove();
 
   return d3
-    .json(
+    .json<GeoJSON.FeatureCollection>(
       GWS_URL +
         "/reconstruct/coastlines_low/?time=" +
         paleoAge +
@@ -27,10 +26,10 @@ export const drawCoastlines = async (
         modelName +
         "&avoid_map_boundary&min_area=2000"
     )
-    .then(function (data: any) {
-      //console.log(data);
-      let coastlinsLayer = svg.append("g").attr("class", "coastlines");
-      coastlinsLayer
+    .then(function (data) {
+      if (!data) return;
+      const coastlinesLayer = svg.append("g").attr("class", "coastlines");
+      coastlinesLayer
         .selectAll(".coastline")
         .data(data.features)
         .enter()
@@ -41,11 +40,11 @@ export const drawCoastlines = async (
         .style("stroke", "blue")
         .style("stroke-width", "0px")
         .style("fill", "gray")
-        .on("mouseover", function (d, i) {
+        .on("mouseover", function () {
           d3.select(this).style("fill-opacity", 0.5);
           d3.select(this).style("stroke-width", "1px");
         })
-        .on("mouseout", function (d, i) {
+        .on("mouseout", function () {
           d3.select(this).style("fill-opacity", 1);
           d3.select(this).style("stroke-width", "0px");
         });

@@ -1,103 +1,49 @@
-// @ts-nocheck -- ported from new-paleomap-maker (non-strict TS); TODO: add types and remove
 import * as d3 from "d3";
 import React, { useEffect } from "react";
+import { GWS_URL } from "../../../lib/gws";
+import type { SvgRef } from "../types";
+
 const dx = 50;
 const dy = 50;
 
 const margin = 20;
 
-let plate_names_dict = {};
+/** a node of GWS /rotation/get_reconstruction_tree: a plate and the plates moving relative to it */
+export type PlateTree = { pid: number; children: PlateTree[] };
 
-/**
- *
- * @param root
- * @returns
- */
-const getTreeWidthHeight = (root) => {
-  let minX = 0,
-    maxX = 0,
-    minY = 0,
-    maxY = 0;
-  root.eachBefore((node) => {
-    if (node.x < minX) minX = node.x;
-    if (node.x > maxX) maxX = node.x;
-    if (node.y < minY) minY = node.y;
-    if (node.y > maxY) maxY = node.y;
-  });
-  return { width: maxX - minX, height: maxY - minY };
+/** GWS /earth/get_plate_names: plate id -> [name, description] */
+type PlateNames = Record<string, [string, string]>;
+
+/** a laid-out tree node, plus the key and hover-box size the drawing code attaches */
+type TreeNode = d3.HierarchyPointNode<PlateTree> & { uid?: number; bbox?: DOMRect };
+type TreeLink = d3.HierarchyPointLink<PlateTree> & { target: TreeNode };
+
+let plate_names_dict: PlateNames = {};
+
+const onNodeClick = (event: MouseEvent, d: TreeNode) => {
+  void event;
+  void d;
 };
 
-/**
- *
- * @param treeWidth
- * @param treeHeight
- * @returns
- */
-/*
-const getMaxViewBox = (treeWidth) => {
-  return [
-    -(treeWidth / 2),
-    -margin,
-    treeWidth + margin,
-    (treeWidth + margin) / aspectRatioValue,
-  ];
-};
-*/
-/**
- *
- * @param svnWidth
- * @param svgHeight
- * @returns
- */
-const getDefaultViewBox = (svnWidth, svgHeight) => {
-  return [-(svnWidth / 2), -margin, svnWidth, svgHeight];
-};
-
-/**
- *
- * @param event
- * @param d
- */
-const onNodeClick = (event, d) => {
-  //console.log("tree node has been clicked.");
-  //console.log(event);
-  //console.log(d);
-};
-
-/**
- *
- * @param svgRef
- */
-const clearTree = (svgRef) => {
-  let svg = d3.select(svgRef.current);
+const clearTree = (svgRef: SvgRef) => {
+  if (!svgRef.current) return;
+  const svg = d3.select(svgRef.current);
   svg.selectAll("*").remove();
 };
 
-/**
- *
- * @param svgRef
- * @param data
- */
-const drawTree = (svgRef, data) => {
-  const root: any = d3.hierarchy(data);
+const drawTree = (svgRef: SvgRef, data: PlateTree) => {
+  const svgEl = svgRef.current;
+  if (!svgEl) return;
+  const root = d3.hierarchy(data) as unknown as TreeNode;
 
-  const tree = d3.tree().nodeSize([dx, dy]);
+  const tree = d3.tree<PlateTree>().nodeSize([dx, dy]);
   const diagonal = d3
-    .linkVertical()
+    .linkVertical<{ source: [number, number]; target: [number, number] }, [number, number]>()
     .x((d) => d[0])
     .y((d) => d[1]);
 
-  let svg = d3.select(svgRef.current);
+  const svg = d3.select(svgEl);
   svg.selectAll("*").remove();
-
-  /*
-    svg
-      .append("g")
-      .append("rect")
-      .attr("x", "0")
-      .attr("y", "0")
-      .attr("width", "200")
-      .attr("height", "200");*/
 
   const gLink = svg
     .append("g")
@@ -114,42 +60,34 @@ const drawTree = (svgRef, data) => {
   // Compute the new tree layout.
   tree(root);
 
-  const nodes = root.descendants().reverse();
-  const links = root.links();
+  const nodes = root.descendants().reverse() as TreeNode[];
+  const links = root.links() as TreeLink[];
 
-  const node = gNode.selectAll("g").data(nodes, (d: any) => d.id);
+  const node = gNode
+    .selectAll<SVGGElement, TreeNode>("g")
+    .data(nodes, (d) => String(d.uid));
 
-  root.descendants().forEach((d: any, i) => {
-    d.id = i;
+  root.descendants().forEach((d, i) => {
+    (d as TreeNode).uid = i;
   });
 
   const nodeEnter = node
     .enter()
     .append("g")
-    .attr("transform", (d) => `translate(${root.x},${root.y})`)
+    .attr("transform", () => `translate(${root.x},${root.y})`)
     .attr("fill-opacity", 1)
     .attr("stroke-opacity", 1)
-    .on("click", (event, d: any) => {
+    .on("click", (event: MouseEvent, d) => {
       onNodeClick(event, d);
     });
-
-  /*
-  nodeEnter
-    .append("circle")
-    .attr("r", 10)
-    .attr("fill", (d: any) =>
-      d.children ? "MediumAquaMarine" : "LightSkyBlue"
-    )
-    .attr("stroke-width", 10);
-    */
 
   nodeEnter
     .append("text")
     .attr("dy", "0.31em")
     .attr("x", 0)
     .attr("text-anchor", "middle")
-    .text((d: any) => d.data.pid.toString())
-    .attr("font-size", (d: any) => (d.data.pid > 999 ? "0.5em" : "1em"))
+    .text((d) => d.data.pid.toString())
+    .attr("font-size", (d) => (d.data.pid > 999 ? "0.5em" : "1em"))
     .clone(true)
     .lower()
     .attr("stroke-linejoin", "round")
@@ -157,15 +95,15 @@ const drawTree = (svgRef, data) => {
     .attr("stroke", "white");
 
   // display PID name and description while mouse is over the node
-  nodeEnter.on("mouseover", function (event, d: any) {
-    d3.select(this).style("fill", "red");
+  nodeEnter.on("mouseover", function (event, d) {
+    const g = d3.select<SVGGElement, TreeNode>(this);
+    g.style("fill", "red");
 
-    //console.log(d3.select(this));
     let name = "Unknown";
     let desc = "N/A";
     if (d.data.pid.toString() in plate_names_dict) {
-      let name_ = plate_names_dict[d.data.pid.toString()][0];
-      let desc_ = plate_names_dict[d.data.pid.toString()][1];
+      const name_ = plate_names_dict[d.data.pid.toString()][0];
+      const desc_ = plate_names_dict[d.data.pid.toString()][1];
       if (name_.length > 0) {
         name = name_;
       }
@@ -174,8 +112,7 @@ const drawTree = (svgRef, data) => {
       }
     }
 
-    const rect = d3
-      .select(this)
+    const rect = g
       .append("rect")
       .attr("class", "pid-info")
       .attr("x", 20)
@@ -183,7 +120,7 @@ const drawTree = (svgRef, data) => {
       .attr("height", 35)
       .style("fill", "pink");
 
-    d3.select(this)
+    g
       .append("text")
       .classed("pid-info", true)
       .attr("x", 25)
@@ -192,7 +129,7 @@ const drawTree = (svgRef, data) => {
       .html("Name: " + name)
       .call(getTextBox);
 
-    d3.select(this)
+    g
       .append("text")
       .classed("pid-info", true)
       .attr("x", 25)
@@ -201,16 +138,13 @@ const drawTree = (svgRef, data) => {
       .html("Description: " + desc)
       .call(getTextBox);
 
-    rect.attr("width", function (d: any) {
-      return d.bbox.width + 10;
+    rect.attr("width", function (d) {
+      return d.bbox!.width + 10;
     });
   });
 
-  /**
-   *
-   * @param selection
-   */
-  function getTextBox(selection) {
+  /** remember the widest text box on the node's datum, to size the pink box */
+  function getTextBox(selection: d3.Selection<SVGTextElement, TreeNode, null, undefined>) {
     selection.each(function (d) {
       if (!d.bbox || d.bbox.width < this.getBBox().width) {
         d.bbox = this.getBBox();
@@ -218,48 +152,35 @@ const drawTree = (svgRef, data) => {
     });
   }
 
-  nodeEnter.on("mouseout", function (event, d: any) {
+  nodeEnter.on("mouseout", function () {
     d3.select(this).style("fill", null);
     d3.selectAll(".pid-info").remove();
   });
 
-  /*
-    let treeSize = getTreeWidthHeight(root);
-    let viewBox = getDefaultViewBox(
-      d3R12nTreeSVGRef.current.clientWidth,
-      d3R12nTreeSVGRef.current.clientHeight
-    );
-    */
   const duration = 2500;
+  // one transition shared by the nodes and links, so they move together
   const transition = svg
     .transition()
-    .duration(duration)
-    //.attr(
-    //  "viewBox",
-    //  `${viewBox[0]},${viewBox[1]},${viewBox[2]},${viewBox[3]}`
-    //)
-    .tween(
-      "resize",
-      window.ResizeObserver ? null : () => () => svg.dispatch("toggle")
-    );
+    .duration(duration) as unknown as d3.Transition<d3.BaseType, unknown, null, undefined>;
 
   // Transition nodes to their new position.
   node
     .merge(nodeEnter)
     .transition(transition)
-    .attr("transform", (d: any) => `translate(${d.x},${d.y})`)
+    .attr("transform", (d) => `translate(${d.x},${d.y})`)
     .attr("fill-opacity", 1)
     .attr("stroke-opacity", 1);
 
-  //console.log(links);
   // Update the links…
-  const link = gLink.selectAll("path").data(links, (d: any) => d.target.id);
+  const link = gLink
+    .selectAll<SVGPathElement, TreeLink>("path")
+    .data(links, (d) => String(d.target.uid));
 
   // Enter any new links at the parent's previous position.
   const linkEnter = link
     .enter()
     .append("path")
-    .attr("d", (d) => {
+    .attr("d", () => {
       return diagonal({ source: [root.x, root.y], target: [root.x, root.y] });
     });
 
@@ -267,49 +188,29 @@ const drawTree = (svgRef, data) => {
   link
     .merge(linkEnter)
     .transition(transition)
-    .attr("d", (d: any) => {
+    .attr("d", (d) => {
       return diagonal({
         source: [d.source.x, d.source.y],
         target: [d.target.x, d.target.y],
       });
     });
 
-  let zoom = d3
-    .zoom()
-    //.extent([
-    //  [viewBox[0], viewBox[1]],
-    //  [viewBox[2], viewBox[3]],
-    //])
+  const zoom = d3
+    .zoom<SVGSVGElement, unknown>()
     .scaleExtent([0, 100])
     .on("zoom", zoomed);
 
   svg.call(zoom);
 
-  svg.call(
-    zoom.transform,
-    d3.zoomIdentity.translate(svgRef.current.clientWidth / 2, margin)
-  );
+  svg.call(zoom.transform, d3.zoomIdentity.translate(svgEl.clientWidth / 2, margin));
 
-  function zoomed({ transform }) {
-    //console.log(transform);
-    gNode.attr("transform", transform);
-    gLink.attr("transform", transform);
-    /*svg.attr(
-        "viewBox",
-        `${(viewBox[0] - transform.x) / transform.k},${
-          (viewBox[1] - transform.y) / transform.k
-        }, ${viewBox[2] / transform.k}, ${viewBox[3] / transform.k}`
-      );*/
+  function zoomed({ transform }: d3.D3ZoomEvent<SVGSVGElement, unknown>) {
+    gNode.attr("transform", transform.toString());
+    gLink.attr("transform", transform.toString());
   }
 };
 
-/**
- *
- * @param children
- * @param maxPID
- * @returns
- */
-const hasValidChild = (children, maxPID: number) => {
+const hasValidChild = (children: PlateTree[], maxPID: number) => {
   for (let i = 0; i < children.length; i++) {
     if (children[i].pid < maxPID) {
       return true;
@@ -317,13 +218,10 @@ const hasValidChild = (children, maxPID: number) => {
   }
   return false;
 };
-/**
- *
- * @param trees
- * @returns
- */
-const getNonLeavePIDs = (trees, maxPID: number) => {
-  let pids = new Set();
+
+/** the plate ids, below maxPID, that have at least one child below maxPID */
+const getNonLeavePIDs = (trees: PlateTree[], maxPID: number) => {
+  const pids = new Set<string>();
   for (let i = 0; i < trees.length; i++) {
     depth_first_search(trees[i], (node) => {
       if (node.pid < maxPID && hasValidChild(node.children, maxPID)) {
@@ -335,14 +233,8 @@ const getNonLeavePIDs = (trees, maxPID: number) => {
   return Array.from(pids).sort();
 };
 
-/**
- *
- * @param trees
- * @param rootPID
- * @returns
- */
-const findSubTree = (trees, rootPID: string) => {
-  let ret = {};
+const findSubTree = (trees: PlateTree[], rootPID: string): PlateTree | null => {
+  let ret: PlateTree | null = null;
   for (let i = 0; i < trees.length; i++) {
     depth_first_search(trees[i], (node) => {
       if (node.pid.toString() == rootPID) {
@@ -355,123 +247,93 @@ const findSubTree = (trees, rootPID: string) => {
   return ret;
 };
 
-/**
- *
- * @param tree
- * @param maxPID
- */
-const filterTree = (tree, maxPID: number) => {
-  let newTree = {};
-  if (tree["pid"] > maxPID) {
+/** a copy of the tree without plates above maxPID (or their descendants) */
+const filterTree = (tree: PlateTree, maxPID: number): PlateTree | null => {
+  if (tree.pid > maxPID) {
     return null;
   }
 
-  newTree["pid"] = tree["pid"];
-  newTree["children"] = [];
-  //console.log(tree);
-  for (let i = 0; i < tree["children"].length; i++) {
-    let child = filterTree(tree["children"][i], maxPID);
+  const newTree: PlateTree = { pid: tree.pid, children: [] };
+  for (let i = 0; i < tree.children.length; i++) {
+    const child = filterTree(tree.children[i], maxPID);
     if (child) {
-      newTree["children"].push(child);
+      newTree.children.push(child);
     }
   }
   return newTree;
 };
 
-/**
- *
- * @param tree
- * @param callback
- */
-const depth_first_search = (tree, callback) => {
-  let ret = callback(tree);
+/** visit every node; returning false from the callback skips that node's subtree */
+const depth_first_search = (tree: PlateTree, callback: (node: PlateTree) => boolean) => {
+  const ret = callback(tree);
   if (!ret) {
     return;
   }
-  for (let i = 0; i < tree["children"].length; i++) {
-    depth_first_search(tree["children"][i], callback);
+  for (let i = 0; i < tree.children.length; i++) {
+    depth_first_search(tree.children[i], callback);
   }
 };
 
-/**
- *
- * @param a
- * @param b
- * @returns
- */
-function comparePID(a, b) {
-  return a["pid"] - b["pid"];
+function comparePID(a: PlateTree, b: PlateTree) {
+  return a.pid - b.pid;
 }
 
-/**
- * make sure the children will be rendered in consistent order.
- *
- * @param tree
- */
-const sortChildren = (tree) => {
-  function comparePID(a, b) {
-    return a["pid"] - b["pid"];
-  }
-  tree["children"].sort(comparePID);
-  for (let i = 0; i < tree["children"].length; i++) {
-    sortChildren(tree["children"][i]);
+/** make sure the children will be rendered in consistent order */
+const sortChildren = (tree: PlateTree) => {
+  tree.children.sort(comparePID);
+  for (let i = 0; i < tree.children.length; i++) {
+    sortChildren(tree.children[i]);
   }
 };
 
-/**
+/*
+ * Build trees from a list of [parent, child] edges, for if GWS ever returns
+ * edges rather than trees again. Unused today; kept on purpose (the original
+ * note said "keep the code, do not remove"):
  *
- * @param svgRef
- * @param paleoAge
- * @param modelName
- * @param rootPid
- * @param setAllPIDs
- * @param maxPID
+ *   const roots = findRoots(edges);
+ *   const trees = roots.map((r) => ({ name: r, children: getChildren(r, edges) }));
+ */
+type Edge = [number, number];
+type EdgeTree = { name: number; children: EdgeTree[] };
+
+export const getChildren = (node: number, edges: Edge[]): EdgeTree[] =>
+  edges
+    .filter((edge) => edge[0] == node)
+    .map((edge) => ({ name: edge[1], children: getChildren(edge[1], edges) }));
+
+/** given a set of "tree edges", find the "roots": the nodes without a parent */
+export const findRoots = (edges: Edge[]) => {
+  const childrenSet = new Set(edges.map((edge) => edge[1]));
+  return Array.from(new Set(edges.map((edge) => edge[0]))).filter((p) => !childrenSet.has(p));
+};
+
+/**
+ * Fetch the reconstruction tree for a model and time from GWS and draw the
+ * part under rootPid, leaving out plates above maxPID. Also reports which
+ * plate ids can be chosen as a root (those with children).
  */
 export const useDrawR12nTree = (
-  svgRef,
-  paleoAge,
-  modelName,
-  rootPid,
-  setAllPIDs,
-  maxPID
+  svgRef: SvgRef,
+  paleoAge: number,
+  modelName: string,
+  rootPid: string,
+  setAllPIDs: (pids: string[]) => void,
+  maxPID: number
 ) => {
-  const [trees, setTrees] = React.useState([]);
+  const [trees, setTrees] = React.useState<PlateTree[]>([]);
 
-  /**
-   *
-   */
   useEffect(() => {
-    d3.json(
-      "https://gws.gplates.org/earth/get_plate_names"
-      //"http://localhost:18000/earth/get_plate_names"
-    ).then(function (data: any) {
-      //console.log(data);
-      plate_names_dict = data;
+    d3.json<PlateNames>(GWS_URL + "/earth/get_plate_names").then(function (data) {
+      if (data) plate_names_dict = data;
     });
   }, []);
 
-  /**
-   *
-   */
   useEffect(() => {
-    d3.json(
-      "https://gws.gplates.org/rotation/get_reconstruction_tree/?model=" +
-        //"http://localhost:18000/rotation/get_reconstruction_tree/?model=" +
-        modelName +
-        "&time=" +
-        paleoAge
-    ).then(function (data: any) {
-      /*
-        //these are the code to build trees from edges
-        //keep the code, do not remove
-        let trees = [];
-        let roots: any = findRoots(edges);
-        for (let r in roots) {
-          let nodes = getChildren(roots[r], edges);
-          trees.push({ name: roots[r], children: nodes });
-        }
-        console.log(trees);
-      */
+    d3.json<PlateTree[]>(
+      GWS_URL + "/rotation/get_reconstruction_tree/?model=" + modelName + "&time=" + paleoAge
+    ).then(function (data) {
+      if (!data) return;
       for (let i = 0; i < data.length; i++) {
         sortChildren(data[i]);
       }
@@ -480,14 +342,11 @@ export const useDrawR12nTree = (
     });
   }, [paleoAge, modelName]);
 
-  /**
-   *
-   */
   useEffect(() => {
     if (trees.length > 0) {
-      let subtree = findSubTree(trees, rootPid);
-      let newTree = null;
-      if ("children" in subtree) {
+      const subtree = findSubTree(trees, rootPid);
+      let newTree: PlateTree | null = null;
+      if (subtree) {
         newTree = filterTree(subtree, maxPID);
       }
       if (newTree) {
@@ -497,14 +356,11 @@ export const useDrawR12nTree = (
         clearTree(svgRef);
       }
     }
-  }, [trees, rootPid, maxPID]);
+  }, [svgRef, trees, rootPid, maxPID]);
 
-  /**
-   *
-   */
   useEffect(() => {
     if (trees.length > 0) {
       setAllPIDs(getNonLeavePIDs(trees, maxPID));
     }
-  }, [trees, maxPID]);
+  }, [setAllPIDs, trees, maxPID]);
 };
