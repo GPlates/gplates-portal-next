@@ -1,0 +1,2288 @@
+{
+ "references": [
+  {
+   "name": "Barnett-Moore et al., 2017",
+   "title": "Dynamic topography and eustasy controlled the paleogeographic evolution of northern Africa since the mid-Cretaceous",
+   "html": "Barnett-Moore, N., R. Hassan, R. D. Müller, S. E. Williams, and N. Flament (2017), <a href=\"http://onlinelibrary.wiley.com/doi/10.1002/2016TC004280/full\" target=\"_blank\"> Dynamic topography and eustasy controlled the paleogeographic evolution of northern Africa since the mid-Cretaceous</a> , Tectonics, 36, 929–944, doi:10.1002/2016TC004280."
+  },
+  {
+   "name": "Flament et al., 2014",
+   "title": "Topographic asymmetry of the South Atlantic from global models of mantle flow and lithospheric stretching",
+   "html": "Flament, N., Gurnis, M., Williams, S., Seton, M., Skogseid, J., Heine, C., and Dietmar Müller R. (2014). <a href=\"http://www.sciencedirect.com/science/article/pii/S0012821X13006511\" target=\"_blank\"> Topographic asymmetry of the South Atlantic from global models of mantle flow and lithospheric stretching.</a> Earth and Planetary Science Letters, 387, 107-119."
+  },
+  {
+   "name": "Shephard et al., 2014",
+   "title": "Circum-Arctic mantle structure and long-wavelength topography since the Jurassic",
+   "html": "Shephard, G. E., Flament, N., Williams, S., Seton, M., Gurnis, M., and Müller R. D. (2014). <a href=\"http://onlinelibrary.wiley.com/doi/10.1002/2014JB011078/abstract\" target=\"_blank\"> Circum-Arctic mantle structure and long-wavelength topography since the Jurassic.</a> Journal of Geophysical Research: Solid Earth. DOI: 10.1002/2014JB011078"
+  },
+  {
+   "name": "Bower et al., 2015",
+   "title": "Assimilating lithosphere and slab history in 4-D Earth models",
+   "html": "Bower, D. J., Gurnis, M., & Flament, N. (2015). <a href=\"http://www.sciencedirect.com/science/article/pii/S0031920114002313\" target=\"_blank\"> Assimilating lithosphere and slab history in 4-D Earth models.</a> Physics of the Earth and Planetary Interiors, 238, 8-22."
+  },
+  {
+   "name": "Rubey et al., 2017",
+   "title": "Global patterns of Earth's dynamic topography since the Jurassic: the role of subducted slabs",
+   "html": "Rubey, M., Brune, S., Heine, C., Davies, D. R., Williams, S. E., and Müller, R. D.: <a href=\"https://www.solid-earth.net/8/899/2017/\" target=\"_blank\">Global patterns in Earth's dynamic topography since the Jurassic: the role of subducted slabs</a>, Solid Earth, 8, 899-919, https://doi.org/10.5194/se-8-899-2017, 2017."
+  },
+  {
+   "name": "Flament et al., 2015",
+   "title": "Influence of subduction history on South American topography",
+   "html": "Flament, N., Gurnis, M., Müller R. D., Bower, D. J., & Husson, L. (2015). <a href=\"http://dx.doi.org/10.1016/j.epsl.2015.08.006\" target=\"_blank\"> Influence of subduction history on South American topography</a>. Earth and Planetary Science Letters, 430, 9-18, http://dx.doi.org/10.1016/j.epsl.2015.08.006."
+  },
+  {
+   "name": "Müller et al., 2016",
+   "title": "Formation of Australian continental margin highlands driven by plate-mantle interaction",
+   "html": "Müller, R. D., Flament, N., Matthews, K. J., Williams, S. E., & Gurnis, M. (2016). <a href=\"http://www.sciencedirect.com/science/article/pii/S0012821X16300425\" target=\"_blank\"> Formation of Australian continental margin highlands driven by plate-mantle interaction.</a>. Earth and Planetary Science Letters, 441, 60-70. http://dx.doi.org/10.1016/j.epsl.2016.02.025"
+  },
+  {
+   "name": "Seton et al., 2015",
+   "title": "Ridge subduction sparked reorganization of the Pacific plate-mantle system 60.50 million years ago",
+   "html": "Seton, M., Flament, N., Whittaker, J., Müller, R. D., Gurnis, M., & Bower, D. J. (2015). <a href=\"http://authors.library.caltech.edu/57562/\" target=\"_blank\">Ridge subduction sparked reorganization of the Pacific plate-mantle system 60.50 million years ago.</a> Geophysical Research Letters, 42(6), 1732-1740."
+  },
+  {
+   "name": "Zahirovic et al., 2016a",
+   "title": "Large fluctuations of shallow seas in low-lying Southeast Asia driven by mantle flow",
+   "html": "Zahirovic, S., Flament, N., Müller, R. D, Seton, M., & Gurnis, M. (2016a). <a href=\"http://onlinelibrary.wiley.com/doi/10.1002/2016GC006434/abstract\">Large fluctuations of shallow seas in low-lying Southeast Asia driven by mantle flow.</a> Geochemistry, Geophysics, Geosystems, 17(9), 3589-3607."
+  },
+  {
+   "name": "Zahirovic et al., 2016b",
+   "title": "Tectonic evolution and deep mantle structure of the eastern Tethys since the latest Jurassic",
+   "html": "Zahirovic, S., Matthews, K. J., Flament, N., Müller, R. D., Hill, K. C., Seton, M., & Gurnis, M. (2016b). <a href=\"http://www.sciencedirect.com/science/article/pii/S0012825216302872\" target=\"_blank\"> Tectonic evolution and deep mantle structure of the eastern Tethys since the latest Jurassic.</a> Earth-Science Reviews, 162, 293-337."
+  },
+  {
+   "name": "Flament et al., 2017",
+   "title": "Origin and evolution of the deep thermochemical structure beneath Eurasia",
+   "html": "Flament, N., Williams, S., Müller, R. D., Gurnis, M., & Bower, D. J. (2017). Origin and evolution of the deep thermochemical structure beneath Eurasia. Nature Communications 7, 14164 doi: 10.1038/ncomms14164."
+  },
+  {
+   "name": "Müller et al., 2018",
+   "title": "Dynamic topography of passive continental margins and their hinterlands since the Cretaceous",
+   "html": "R.D. Müller, R. Hassan, M. Gurnis, N. Flament, S.E. Williams, <a href=\"http://www.sciencedirect.com/science/article/pii/S1342937X17302162\" target=_blank> Dynamic topography of passive continental margins and their hinterlands since the Cretaceous</a>, Gondwana Research, Volume 53, 2018, Pages 225-251, ISSN 1342-937X, https://doi.org/10.1016/j.gr.2017.04.028."
+  },
+  {
+   "name": "Müller et al., 2008",
+   "title": "Age and Bathymetry of the World’s Ocean Crust for the last 140 million years",
+   "html": "Müller, R.D., Sdrolias, M., Gaina, C., Steinberger, B. and Heine, C., 2008. <a href=\"https://www.earthbyte.org/age-and-bathymetry-of-the-worlds-ocean-crust-for-the-last-140-million-years/\" target=_blank> Long-term sea-level fluctuations driven by ocean basin dynamics. </a> science, 319(5868), pp.1357-1362."
+  },
+  {
+   "name": "Cao et al., 2018",
+   "title": "The dynamic topography of eastern China since the latest Jurassic Period",
+   "html": "Cao, X., Flament, N., Müller, D., &#38; Li, S.(2018). <a href=\"https://agupubs.onlinelibrary.wiley.com/doi/abs/10.1029/2017TC004830\" target=_blank> The dynamic topography of eastern China since the latest Jurassic Period.</a> Tectonics, 37. <a href=\"https://doi.org/10.1029/2017TC004830\" target=_blank>https://doi.org/10.1029/2017TC004830</a>"
+  },
+  {
+   "name": "Cao et al., 2019",
+   "title": "The interplay of dynamic topography and eustasy on continental flooding in the late Paleozoic",
+   "html": "Cao, W., Flament, N., Zahirovic, S., Williams, S. and Müller, R.D. 2019. <a href=\"https://www.sciencedirect.com/science/article/pii/S0040195119301416\" target=_blank> The interplay of dynamic topography and eustasy on continental flooding in the late Paleozoic.</a> Tectonophysics. 761. 10.1016/j.tecto.2019.04.018."
+  },
+  {
+   "name": "Braz et al., 2021",
+   "title": "Modelling the role of dynamic topography and eustasy in the evolution of the Great Artesian Basin",
+   "html": "Braz, C., Zahirovic, S., Salles, T., Flament, N., Harrington, L., & Müller, R. D. (2021). <a href=\"https://onlinelibrary.wiley.com/doi/10.1111/bre.12606?af=R\" target=_blank> Modelling the role of dynamic topography and eustasy in the evolution of the Great Artesian Basin.</a> Basin Research. doi:10.1111/bre.12606"
+  },
+  {
+   "name": "Young et al., 2022",
+   "title": "Long-term Phanerozoic sea level change from solid Earth processes",
+   "html": "Alexander Young, Nicolas Flament, Simon E. Williams, Andrew Merdith, Xianzhi Cao, R. Dietmar Müller (2022). <a href=\"https://www.sciencedirect.com/science/article/pii/S0012821X22000875\" target=\"_blank\"> Long-term Phanerozoic sea level change from solid Earth processes.</a> Earth and Planetary Science Letters, Volume 584, ISSN 0012-821X,"
+  }
+ ],
+ "entries": [
+  {
+   "id": "gld324",
+   "name": "AY18",
+   "refs": [
+    "Cao et al., 2019"
+   ]
+  },
+  {
+   "id": "gld51",
+   "name": "C1 (Shephard et al., 2014)",
+   "refs": [
+    "Shephard et al., 2014"
+   ]
+  },
+  {
+   "id": "gld21",
+   "name": "C2 (Shephard et al., 2014)",
+   "refs": [
+    "Shephard et al., 2014"
+   ]
+  },
+  {
+   "id": "gld24",
+   "name": "C3 (Shephard et al., 2014)",
+   "refs": [
+    "Shephard et al., 2014"
+   ]
+  },
+  {
+   "id": "gld31",
+   "name": "C4 (Shephard et al., 2014)",
+   "refs": [
+    "Shephard et al., 2014"
+   ]
+  },
+  {
+   "id": "gld34",
+   "name": "C5 (Shephard et al., 2014)",
+   "refs": [
+    "Shephard et al., 2014"
+   ]
+  },
+  {
+   "id": "gld136",
+   "name": "Case 1 (Flament et al., 2015)",
+   "refs": [
+    "Flament et al., 2015"
+   ]
+  },
+  {
+   "id": "gld98",
+   "name": "Case 1 (Zahirovic et al., 2016a; 2016b)",
+   "refs": [
+    "Zahirovic et al., 2016a",
+    "Zahirovic et al., 2016b"
+   ]
+  },
+  {
+   "id": "gld134",
+   "name": "Case 2 (Flament et al., 2015)",
+   "refs": [
+    "Flament et al., 2015"
+   ]
+  },
+  {
+   "id": "gld115",
+   "name": "Case 2 (Zahirovic et al. 2016a, 2016b",
+   "refs": [
+    "Zahirovic et al., 2016a",
+    "Zahirovic et al., 2016b"
+   ]
+  },
+  {
+   "id": "gld106",
+   "name": "Case 25 (Flament et al., 2017)",
+   "refs": [
+    "Flament et al., 2017"
+   ]
+  },
+  {
+   "id": "gld112",
+   "name": "Case 3 (Flament et al., 2015)",
+   "refs": [
+    "Flament et al., 2015"
+   ]
+  },
+  {
+   "id": "gld108",
+   "name": "Case 3 (Zahirovic et al., 2016a; 2016b)",
+   "refs": [
+    "Zahirovic et al., 2016a",
+    "Zahirovic et al., 2016b"
+   ]
+  },
+  {
+   "id": "gld119",
+   "name": "Case 4 (Flament et al., 2015)",
+   "refs": [
+    "Flament et al., 2015"
+   ]
+  },
+  {
+   "id": "gld107",
+   "name": "Case 4 (Zahirovic et al., 2016a; 2016b)",
+   "refs": [
+    "Zahirovic et al., 2016a",
+    "Zahirovic et al., 2016b"
+   ]
+  },
+  {
+   "id": "gld241",
+   "name": "Case 5 (Zahirovic et al., 2016b)",
+   "refs": [
+    "Zahirovic et al., 2016b"
+   ]
+  },
+  {
+   "id": "C1",
+   "name": "CI",
+   "refs": [
+    "Barnett-Moore et al., 2017"
+   ]
+  },
+  {
+   "id": "C1s",
+   "name": "CI(s)",
+   "refs": [
+    "Barnett-Moore et al., 2017"
+   ]
+  },
+  {
+   "id": "C2",
+   "name": "CII",
+   "refs": [
+    "Barnett-Moore et al., 2017"
+   ]
+  },
+  {
+   "id": "C3",
+   "name": "CIII",
+   "refs": [
+    "Barnett-Moore et al., 2017"
+   ]
+  },
+  {
+   "id": "C4",
+   "name": "CIV",
+   "refs": [
+    "Barnett-Moore et al., 2017"
+   ]
+  },
+  {
+   "id": "C5",
+   "name": "CV",
+   "refs": [
+    "Barnett-Moore et al., 2017"
+   ]
+  },
+  {
+   "id": "C6",
+   "name": "CVI",
+   "refs": [
+    "Barnett-Moore et al., 2017"
+   ]
+  },
+  {
+   "id": "gmcm9",
+   "name": "D10_gmcm9",
+   "refs": [
+    "Braz et al., 2021"
+   ]
+  },
+  {
+   "id": "gld89",
+   "name": "D1_gld89",
+   "refs": [
+    "Braz et al., 2021"
+   ]
+  },
+  {
+   "id": "gld98",
+   "name": "D2_gld98",
+   "refs": [
+    "Braz et al., 2021"
+   ]
+  },
+  {
+   "id": "gld106",
+   "name": "D3_gld106",
+   "refs": [
+    "Braz et al., 2021"
+   ]
+  },
+  {
+   "id": "gld107",
+   "name": "D4_gld107",
+   "refs": [
+    "Braz et al., 2021"
+   ]
+  },
+  {
+   "id": "gld115",
+   "name": "D5_gld115",
+   "refs": [
+    "Braz et al., 2021"
+   ]
+  },
+  {
+   "id": "gld178",
+   "name": "D6_gld178",
+   "refs": [
+    "Braz et al., 2021"
+   ]
+  },
+  {
+   "id": "gld200",
+   "name": "D7_gld200",
+   "refs": [
+    "Braz et al., 2021"
+   ]
+  },
+  {
+   "id": "gld205",
+   "name": "D8_gld205",
+   "refs": [
+    "Braz et al., 2021"
+   ]
+  },
+  {
+   "id": "gld241",
+   "name": "D9_gld241",
+   "refs": [
+    "Braz et al., 2021"
+   ]
+  },
+  {
+   "id": "ngrand",
+   "name": "dynto_ngrand",
+   "refs": [
+    "Müller et al., 2008"
+   ]
+  },
+  {
+   "id": "s20rts",
+   "name": "dynto_s20rts",
+   "refs": [
+    "Müller et al., 2008"
+   ]
+  },
+  {
+   "id": "smean",
+   "name": "dynto_smean",
+   "refs": [
+    "Müller et al., 2008"
+   ]
+  },
+  {
+   "id": "gld71",
+   "name": "G2 (Bower et al., 2015)",
+   "refs": [
+    "Bower et al., 2015"
+   ]
+  },
+  {
+   "id": "gld72",
+   "name": "G3 (Bower et al., 2015)",
+   "refs": [
+    "Bower et al., 2015"
+   ]
+  },
+  {
+   "id": "gld428_m21",
+   "name": "Gld428_1Ga-0Ma",
+   "refs": [
+    "Young et al., 2022"
+   ]
+  },
+  {
+   "id": "gld428",
+   "name": "Gld428_250-0Ma",
+   "refs": [
+    "Young et al., 2022"
+   ]
+  },
+  {
+   "id": "gld21",
+   "name": "HH2 (Flament et al., 2014)",
+   "refs": [
+    "Flament et al., 2014"
+   ]
+  },
+  {
+   "id": "gld321",
+   "name": "KM16",
+   "refs": [
+    "Cao et al., 2019"
+   ]
+  },
+  {
+   "id": "M1",
+   "name": "M1",
+   "refs": [
+    "Müller et al., 2018"
+   ]
+  },
+  {
+   "id": "M2",
+   "name": "M2",
+   "refs": [
+    "Müller et al., 2018"
+   ]
+  },
+  {
+   "id": "M3",
+   "name": "M3",
+   "refs": [
+    "Müller et al., 2018"
+   ]
+  },
+  {
+   "id": "M4",
+   "name": "M4",
+   "refs": [
+    "Müller et al., 2018"
+   ]
+  },
+  {
+   "id": "M5",
+   "name": "M5",
+   "refs": [
+    "Müller et al., 2018"
+   ]
+  },
+  {
+   "id": "M6",
+   "name": "M6",
+   "refs": [
+    "Müller et al., 2018"
+   ]
+  },
+  {
+   "id": "M7",
+   "name": "M7",
+   "refs": [
+    "Müller et al., 2018"
+   ]
+  },
+  {
+   "id": "M7Rate",
+   "name": "M7 Rate",
+   "refs": [
+    "Müller et al., 2018"
+   ]
+  },
+  {
+   "id": "gld115n",
+   "name": "Model 1 ( Müller et al. 2016)",
+   "refs": [
+    "Müller et al., 2016"
+   ]
+  },
+  {
+   "id": "gld189",
+   "name": "Model 1 (Cao et al., 2018)",
+   "refs": [
+    "Cao et al., 2018"
+   ]
+  },
+  {
+   "id": "gld115n",
+   "name": "Model 2 (Cao et al., 2018)",
+   "refs": [
+    "Cao et al., 2018"
+   ]
+  },
+  {
+   "id": "gld98",
+   "name": "Model 2 (Müller et al., 2016)",
+   "refs": [
+    "Müller et al., 2016"
+   ]
+  },
+  {
+   "id": "gld89",
+   "name": "Model 2 (Seton et al., 2015)",
+   "refs": [
+    "Seton et al., 2015"
+   ]
+  },
+  {
+   "id": "gld95",
+   "name": "Model 3 (Müller et al., 2016)",
+   "refs": [
+    "Müller et al., 2016"
+   ]
+  },
+  {
+   "id": "gld89",
+   "name": "Model 4 (Müller et al., 2016)",
+   "refs": [
+    "Müller et al., 2016"
+   ]
+  },
+  {
+   "id": "terra",
+   "name": "Terra",
+   "refs": [
+    "Rubey et al., 2017"
+   ]
+  }
+ ],
+ "models": {
+  "gld107": {
+   "times": [
+    "0.00",
+    "3.00",
+    "8.00",
+    "13.00",
+    "18.00",
+    "28.00",
+    "38.00",
+    "48.00",
+    "59.00",
+    "69.00",
+    "79.00",
+    "89.00",
+    "99.00",
+    "109.00",
+    "119.00",
+    "129.00",
+    "139.00",
+    "149.00",
+    "159.00",
+    "169.00",
+    "179.00",
+    "190.00",
+    "200.00",
+    "210.00",
+    "220.00",
+    "230.00"
+   ],
+   "continentOnly": true,
+   "downloads": true,
+   "legend": "/img/dt-legend.png",
+   "unit": "m"
+  },
+  "gld112": {
+   "times": [
+    "0.00",
+    "3.00",
+    "7.00",
+    "10.00",
+    "15.00",
+    "19.00",
+    "31.00",
+    "39.00",
+    "51.00"
+   ],
+   "continentOnly": true,
+   "downloads": true,
+   "legend": "/img/dt-legend.png",
+   "unit": "m"
+  },
+  "gld134": {
+   "times": [
+    "0.00",
+    "5.00",
+    "9.00",
+    "11.00",
+    "15.00",
+    "21.00",
+    "29.00",
+    "39.00"
+   ],
+   "continentOnly": true,
+   "downloads": true,
+   "legend": "/img/dt-legend.png",
+   "unit": "m"
+  },
+  "gld21": {
+   "times": [
+    "0",
+    "4",
+    "11",
+    "15",
+    "19",
+    "31",
+    "40",
+    "46",
+    "51",
+    "57",
+    "60",
+    "70",
+    "80",
+    "91",
+    "97",
+    "101",
+    "106",
+    "111",
+    "119",
+    "130",
+    "141",
+    "151",
+    "161",
+    "170",
+    "181",
+    "191",
+    "200"
+   ],
+   "continentOnly": true,
+   "downloads": true,
+   "legend": "/img/dt-legend.png",
+   "unit": "m"
+  },
+  "gld31": {
+   "times": [
+    "0.00",
+    "6.00",
+    "9.00",
+    "15.00",
+    "20.00",
+    "30.00",
+    "40.00",
+    "44.00",
+    "51.00",
+    "60.00",
+    "70.00",
+    "75.00",
+    "81.00",
+    "83.00",
+    "87.00",
+    "91.00",
+    "97.00",
+    "100.00",
+    "105.00",
+    "109.00",
+    "118.00",
+    "121.00",
+    "126.00",
+    "130.00",
+    "135.00",
+    "140.00",
+    "143.00",
+    "150.00",
+    "160.00",
+    "170.00",
+    "179.00",
+    "191.00",
+    "201.00",
+    "211.00",
+    "219.00",
+    "230.00"
+   ],
+   "continentOnly": true,
+   "downloads": true,
+   "legend": "/img/dt-legend.png",
+   "unit": "m"
+  },
+  "gld72": {
+   "times": [
+    "0",
+    "4",
+    "11",
+    "14",
+    "21",
+    "30",
+    "40",
+    "49",
+    "61",
+    "69",
+    "81",
+    "89",
+    "100",
+    "110",
+    "121",
+    "129",
+    "139",
+    "150",
+    "161",
+    "170",
+    "180",
+    "191",
+    "200",
+    "210",
+    "221",
+    "230"
+   ],
+   "continentOnly": true,
+   "downloads": true,
+   "legend": "/img/dt-legend.png",
+   "unit": "m"
+  },
+  "gld89": {
+   "times": [
+    "0.00",
+    "2.00",
+    "6.00",
+    "10.00",
+    "16.00",
+    "21.00",
+    "30.00",
+    "41.00",
+    "50.00",
+    "60.00",
+    "69.00",
+    "80.00",
+    "89.00",
+    "100.00",
+    "110.00",
+    "121.00",
+    "131.00",
+    "141.00",
+    "150.00"
+   ],
+   "continentOnly": true,
+   "downloads": true,
+   "legend": "/img/dt-legend.png",
+   "unit": "m"
+  },
+  "gld95": {
+   "times": [
+    "0.00",
+    "3.00",
+    "7.00",
+    "11.00",
+    "15.00",
+    "20.00",
+    "31.00",
+    "40.00",
+    "51.00",
+    "60.00",
+    "71.00",
+    "80.00",
+    "89.00",
+    "100.00",
+    "110.00",
+    "120.00",
+    "130.00",
+    "141.00",
+    "150.00"
+   ],
+   "continentOnly": true,
+   "downloads": true,
+   "legend": "/img/dt-legend.png",
+   "unit": "m"
+  },
+  "M1": {
+   "times": [
+    "0.00",
+    "10.00",
+    "20.00",
+    "30.00",
+    "40.00",
+    "50.00",
+    "60.00",
+    "70.00",
+    "80.00",
+    "90.00"
+   ],
+   "continentOnly": true,
+   "downloads": true,
+   "legend": "/img/dt-legend.png",
+   "unit": "m"
+  },
+  "M3": {
+   "times": [
+    "0.00",
+    "9.00",
+    "19.00",
+    "29.00",
+    "39.00",
+    "49.00",
+    "59.00",
+    "70.00",
+    "80.00",
+    "90.00",
+    "100.00",
+    "110.00",
+    "120.00",
+    "130.00",
+    "140.00"
+   ],
+   "continentOnly": true,
+   "downloads": true,
+   "legend": "/img/dt-legend.png",
+   "unit": "m"
+  },
+  "M5": {
+   "times": [
+    "0.00",
+    "9.00",
+    "19.00",
+    "29.00",
+    "39.00",
+    "49.00",
+    "59.00",
+    "69.00",
+    "79.00",
+    "89.00",
+    "99.00",
+    "110.00",
+    "120.00",
+    "130.00",
+    "140.00"
+   ],
+   "continentOnly": true,
+   "downloads": true,
+   "legend": "/img/dt-legend.png",
+   "unit": "m"
+  },
+  "M7": {
+   "times": [
+    "0.00",
+    "9.00",
+    "19.00",
+    "29.00",
+    "39.00",
+    "49.00",
+    "59.00",
+    "69.00",
+    "79.00",
+    "89.00",
+    "99.00",
+    "109.00",
+    "119.00",
+    "129.00",
+    "140.00"
+   ],
+   "continentOnly": true,
+   "downloads": true,
+   "legend": "/img/dt-legend.png",
+   "unit": "m"
+  },
+  "M7Rate": {
+   "times": [
+    "4.50",
+    "14.00",
+    "24.00",
+    "34.00",
+    "44.00",
+    "54.00",
+    "64.00",
+    "74.00",
+    "84.00",
+    "94.00",
+    "104.00",
+    "114.00",
+    "124.00",
+    "134.50"
+   ],
+   "continentOnly": true,
+   "downloads": true,
+   "legend": "/img/dt-rate-legend.png",
+   "unit": "m/Ma"
+  },
+  "terra": {
+   "times": [
+    "0.00",
+    "5.00",
+    "10.00",
+    "15.00",
+    "20.00",
+    "25.00",
+    "30.00",
+    "35.00",
+    "40.00",
+    "45.00",
+    "50.00",
+    "55.00",
+    "60.00",
+    "65.00",
+    "70.00",
+    "75.00",
+    "80.00",
+    "85.00",
+    "90.00",
+    "95.00",
+    "100.00",
+    "105.00",
+    "110.00",
+    "115.00",
+    "120.00",
+    "125.00",
+    "130.00",
+    "135.00",
+    "140.00",
+    "145.00",
+    "150.00",
+    "155.00",
+    "160.00",
+    "165.00",
+    "170.00",
+    "175.00",
+    "180.00",
+    "185.00",
+    "190.00",
+    "195.00",
+    "200.00"
+   ],
+   "continentOnly": true,
+   "downloads": true,
+   "legend": "/img/dt-legend.png",
+   "unit": "m"
+  },
+  "gld106": {
+   "times": [
+    "0.00",
+    "9.00",
+    "14.00",
+    "19.00",
+    "29.00",
+    "39.00",
+    "49.00",
+    "59.00",
+    "70.00",
+    "80.00",
+    "90.00",
+    "100.00",
+    "110.00",
+    "120.00",
+    "130.00",
+    "140.00",
+    "150.00"
+   ],
+   "continentOnly": true,
+   "downloads": false,
+   "legend": "/img/dt-legend.png",
+   "unit": "m"
+  },
+  "gld108": {
+   "times": [
+    "0.00",
+    "4.00",
+    "9.00",
+    "14.00",
+    "19.00",
+    "29.00",
+    "39.00",
+    "49.00",
+    "59.00",
+    "69.00",
+    "79.00",
+    "89.00",
+    "99.00",
+    "109.00",
+    "119.00",
+    "129.00",
+    "139.00",
+    "149.00",
+    "160.00",
+    "170.00",
+    "180.00",
+    "190.00",
+    "200.00",
+    "210.00",
+    "220.00",
+    "230.00"
+   ],
+   "continentOnly": true,
+   "downloads": true,
+   "legend": "/img/dt-legend.png",
+   "unit": "m"
+  },
+  "gld115": {
+   "times": [
+    "0.00",
+    "4.00",
+    "9.00",
+    "14.00",
+    "19.00",
+    "29.00",
+    "39.00",
+    "49.00",
+    "59.00",
+    "69.00",
+    "79.00",
+    "89.00",
+    "99.00",
+    "109.00",
+    "119.00",
+    "129.00",
+    "139.00",
+    "149.00",
+    "160.00",
+    "170.00",
+    "180.00",
+    "190.00",
+    "200.00",
+    "210.00",
+    "220.00",
+    "230.00"
+   ],
+   "continentOnly": true,
+   "downloads": true,
+   "legend": "/img/dt-legend-gld115.png",
+   "unit": "m"
+  },
+  "gld115n": {
+   "times": [
+    "0.00",
+    "9.00",
+    "19.00",
+    "29.00",
+    "39.00",
+    "49.00",
+    "59.00",
+    "69.00",
+    "79.00",
+    "89.00",
+    "99.00",
+    "109.00",
+    "119.00",
+    "129.00",
+    "139.00",
+    "149.00",
+    "160.00",
+    "170.00",
+    "180.00",
+    "190.00",
+    "200.00",
+    "210.00",
+    "220.00",
+    "230.00"
+   ],
+   "continentOnly": true,
+   "downloads": true,
+   "legend": "/img/dt-legend.png",
+   "unit": "m"
+  },
+  "gld119": {
+   "times": [
+    "0.00",
+    "2.00",
+    "6.00",
+    "10.00",
+    "16.00",
+    "21.00",
+    "30.00",
+    "41.00",
+    "50.00",
+    "60.00",
+    "69.00",
+    "80.00",
+    "89.00",
+    "100.00",
+    "110.00",
+    "121.00",
+    "131.00",
+    "141.00",
+    "150.00"
+   ],
+   "continentOnly": true,
+   "downloads": true,
+   "legend": "/img/dt-legend.png",
+   "unit": "m"
+  },
+  "gld136": {
+   "times": [
+    "0.00",
+    "5.00",
+    "9.00",
+    "11.00"
+   ],
+   "continentOnly": true,
+   "downloads": true,
+   "legend": "/img/dt-legend.png",
+   "unit": "m"
+  },
+  "gld178": {
+   "times": [
+    "0.00",
+    "9.00",
+    "19.00",
+    "29.00",
+    "49.00",
+    "59.00",
+    "69.00",
+    "79.00",
+    "89.00",
+    "99.00",
+    "109.00",
+    "119.00",
+    "129.00",
+    "139.00",
+    "149.00",
+    "159.00",
+    "169.00",
+    "180.00",
+    "190.00",
+    "200.00",
+    "210.00",
+    "220.00",
+    "230.00"
+   ],
+   "continentOnly": true,
+   "downloads": false,
+   "legend": "/img/dt-legend.png",
+   "unit": "m"
+  },
+  "gld200": {
+   "times": [
+    "0.00",
+    "8.00",
+    "18.00",
+    "29.00",
+    "39.00",
+    "49.00",
+    "59.00",
+    "69.00",
+    "79.00",
+    "89.00",
+    "99.00",
+    "109.00",
+    "119.00",
+    "129.00",
+    "139.00",
+    "149.00",
+    "159.00"
+   ],
+   "continentOnly": true,
+   "downloads": false,
+   "legend": "/img/dt-legend.png",
+   "unit": "m"
+  },
+  "gld205": {
+   "times": [
+    "0.00",
+    "9.00",
+    "19.00",
+    "29.00",
+    "39.00",
+    "49.00",
+    "59.00",
+    "69.00",
+    "79.00",
+    "89.00",
+    "99.00",
+    "109.00",
+    "119.00",
+    "129.00",
+    "139.00",
+    "149.00",
+    "160.00"
+   ],
+   "continentOnly": true,
+   "downloads": false,
+   "legend": "/img/dt-legend.png",
+   "unit": "m"
+  },
+  "gld24": {
+   "times": [
+    "0.00",
+    "9.00",
+    "19.00",
+    "30.00",
+    "39.00",
+    "50.00",
+    "60.00",
+    "70.00",
+    "80.00",
+    "90.00",
+    "95.00",
+    "100.00",
+    "106.00",
+    "110.00",
+    "121.00",
+    "130.00",
+    "141.00",
+    "151.00",
+    "161.00",
+    "170.00",
+    "181.00",
+    "190.00",
+    "201.00",
+    "211.00",
+    "219.00",
+    "230.00"
+   ],
+   "continentOnly": true,
+   "downloads": true,
+   "legend": "/img/dt-legend.png",
+   "unit": "m"
+  },
+  "gld34": {
+   "times": [
+    "0.00",
+    "5.00",
+    "10.00",
+    "15.00",
+    "20.00",
+    "30.00",
+    "40.00",
+    "45.00",
+    "50.00",
+    "60.00",
+    "71.00",
+    "75.00",
+    "79.00",
+    "90.00",
+    "100.00",
+    "104.00",
+    "111.00",
+    "120.00",
+    "125.00",
+    "131.00",
+    "140.00",
+    "150.00",
+    "161.00",
+    "170.00",
+    "179.00",
+    "191.00",
+    "200.00",
+    "211.00",
+    "219.00",
+    "230.00"
+   ],
+   "continentOnly": true,
+   "downloads": true,
+   "legend": "/img/dt-legend.png",
+   "unit": "m"
+  },
+  "gld51": {
+   "times": [
+    "0",
+    "6",
+    "9",
+    "15",
+    "20",
+    "29",
+    "40",
+    "44",
+    "49",
+    "59",
+    "70",
+    "75",
+    "79",
+    "90",
+    "101",
+    "105",
+    "109",
+    "120",
+    "126",
+    "130",
+    "141",
+    "151",
+    "159",
+    "170",
+    "180",
+    "189",
+    "200",
+    "221",
+    "230"
+   ],
+   "continentOnly": true,
+   "downloads": true,
+   "legend": "/img/dt-legend.png",
+   "unit": "m"
+  },
+  "gld71": {
+   "times": [
+    "0",
+    "4",
+    "8",
+    "15",
+    "20",
+    "29",
+    "40",
+    "49",
+    "61",
+    "70",
+    "80",
+    "89",
+    "99",
+    "105",
+    "109",
+    "121",
+    "131",
+    "141",
+    "150",
+    "159",
+    "172",
+    "179",
+    "191",
+    "201",
+    "211",
+    "220",
+    "230"
+   ],
+   "continentOnly": true,
+   "downloads": true,
+   "legend": "/img/dt-legend.png",
+   "unit": "m"
+  },
+  "gld98": {
+   "times": [
+    "0.00",
+    "6.00",
+    "10.00",
+    "14.00",
+    "19.00",
+    "31.00",
+    "40.00",
+    "50.00",
+    "60.00",
+    "70.00",
+    "81.00",
+    "90.00",
+    "101.00",
+    "111.00",
+    "119.00",
+    "131.00",
+    "140.00",
+    "150.00"
+   ],
+   "continentOnly": true,
+   "downloads": true,
+   "legend": "/img/dt-legend.png",
+   "unit": "m"
+  },
+  "M2": {
+   "times": [
+    "0.00",
+    "9.00",
+    "19.00",
+    "29.00",
+    "39.00",
+    "49.00",
+    "59.00",
+    "70.00",
+    "80.00",
+    "90.00",
+    "100.00",
+    "110.00",
+    "120.00",
+    "130.00",
+    "140.00"
+   ],
+   "continentOnly": true,
+   "downloads": true,
+   "legend": "/img/dt-legend.png",
+   "unit": "m"
+  },
+  "M4": {
+   "times": [
+    "0.00",
+    "9.00",
+    "19.00",
+    "29.00",
+    "39.00",
+    "49.00",
+    "59.00",
+    "70.00",
+    "80.00",
+    "90.00",
+    "100.00",
+    "110.00",
+    "120.00",
+    "130.00",
+    "140.00"
+   ],
+   "continentOnly": true,
+   "downloads": true,
+   "legend": "/img/dt-legend.png",
+   "unit": "m"
+  },
+  "M6": {
+   "times": [
+    "0.00",
+    "9.00",
+    "19.00",
+    "29.00",
+    "39.00",
+    "49.00",
+    "59.00",
+    "70.00",
+    "80.00",
+    "90.00",
+    "100.00",
+    "110.00",
+    "120.00",
+    "130.00",
+    "140.00"
+   ],
+   "continentOnly": true,
+   "downloads": true,
+   "legend": "/img/dt-legend.png",
+   "unit": "m"
+  },
+  "gld241": {
+   "times": [
+    "0.00",
+    "9.00",
+    "19.00",
+    "29.00",
+    "39.00",
+    "49.00",
+    "59.00",
+    "69.00",
+    "79.00",
+    "89.00",
+    "99.00",
+    "109.00",
+    "119.00",
+    "129.00",
+    "139.00",
+    "149.00",
+    "159.00",
+    "169.00",
+    "180.00",
+    "190.00",
+    "200.00",
+    "210.00",
+    "220.00",
+    "230.00"
+   ],
+   "continentOnly": true,
+   "downloads": true,
+   "legend": "/img/dt-legend.png",
+   "unit": "m"
+  },
+  "ngrand": {
+   "times": [
+    "0.00",
+    "1.00",
+    "2.00",
+    "3.00",
+    "4.00",
+    "5.00",
+    "6.00",
+    "7.00",
+    "8.00",
+    "9.00",
+    "10.00",
+    "11.00",
+    "12.00",
+    "13.00",
+    "14.00",
+    "15.00",
+    "16.00",
+    "17.00",
+    "18.00",
+    "19.00",
+    "20.00",
+    "21.00",
+    "22.00",
+    "23.00",
+    "24.00",
+    "25.00",
+    "26.00",
+    "27.00",
+    "28.00",
+    "29.00",
+    "30.00",
+    "31.00",
+    "32.00",
+    "33.00",
+    "34.00",
+    "35.00",
+    "36.00",
+    "37.00",
+    "38.00",
+    "39.00",
+    "40.00",
+    "41.00",
+    "42.00",
+    "43.00",
+    "44.00",
+    "45.00",
+    "46.00",
+    "47.00",
+    "48.00",
+    "49.00",
+    "50.00",
+    "51.00",
+    "52.00",
+    "53.00",
+    "54.00",
+    "55.00",
+    "56.00",
+    "57.00",
+    "58.00",
+    "59.00",
+    "60.00",
+    "61.00",
+    "62.00",
+    "63.00",
+    "64.00",
+    "65.00",
+    "66.00",
+    "67.00",
+    "68.00",
+    "69.00",
+    "70.00"
+   ],
+   "continentOnly": true,
+   "downloads": true,
+   "legend": "/img/dt-legend.png",
+   "unit": "m"
+  },
+  "s20rts": {
+   "times": [
+    "0.00",
+    "1.00",
+    "2.00",
+    "3.00",
+    "4.00",
+    "5.00",
+    "6.00",
+    "7.00",
+    "8.00",
+    "9.00",
+    "10.00",
+    "11.00",
+    "12.00",
+    "13.00",
+    "14.00",
+    "15.00",
+    "16.00",
+    "17.00",
+    "18.00",
+    "19.00",
+    "20.00",
+    "21.00",
+    "22.00",
+    "23.00",
+    "24.00",
+    "25.00",
+    "26.00",
+    "27.00",
+    "28.00",
+    "29.00",
+    "30.00",
+    "31.00",
+    "32.00",
+    "33.00",
+    "34.00",
+    "35.00",
+    "36.00",
+    "37.00",
+    "38.00",
+    "39.00",
+    "40.00",
+    "41.00",
+    "42.00",
+    "43.00",
+    "44.00",
+    "45.00",
+    "46.00",
+    "47.00",
+    "48.00",
+    "49.00",
+    "50.00",
+    "51.00",
+    "52.00",
+    "53.00",
+    "54.00",
+    "55.00",
+    "56.00",
+    "57.00",
+    "58.00",
+    "59.00",
+    "60.00",
+    "61.00",
+    "62.00",
+    "63.00",
+    "64.00",
+    "65.00",
+    "66.00",
+    "67.00",
+    "68.00",
+    "69.00",
+    "70.00",
+    "71.00",
+    "72.00",
+    "73.00",
+    "74.00",
+    "75.00",
+    "76.00",
+    "77.00",
+    "78.00",
+    "79.00",
+    "80.00",
+    "81.00",
+    "82.00",
+    "83.00",
+    "84.00",
+    "85.00",
+    "86.00",
+    "87.00",
+    "88.00",
+    "89.00",
+    "90.00",
+    "91.00",
+    "92.00",
+    "94.00",
+    "95.00",
+    "96.00",
+    "97.00",
+    "98.00",
+    "99.00",
+    "100.00"
+   ],
+   "continentOnly": true,
+   "downloads": true,
+   "legend": "/img/dt-legend.png",
+   "unit": "m"
+  },
+  "smean": {
+   "times": [
+    "0.00",
+    "1.00",
+    "2.00",
+    "3.00",
+    "4.00",
+    "5.00",
+    "6.00",
+    "7.00",
+    "8.00",
+    "9.00",
+    "10.00",
+    "11.00",
+    "12.00",
+    "13.00",
+    "14.00",
+    "15.00",
+    "16.00",
+    "17.00",
+    "18.00",
+    "19.00",
+    "20.00",
+    "21.00",
+    "22.00",
+    "23.00",
+    "24.00",
+    "25.00",
+    "26.00",
+    "27.00",
+    "28.00",
+    "29.00",
+    "30.00",
+    "31.00",
+    "32.00",
+    "33.00",
+    "34.00",
+    "35.00",
+    "36.00",
+    "37.00",
+    "38.00",
+    "39.00",
+    "40.00",
+    "41.00",
+    "42.00",
+    "43.00",
+    "44.00",
+    "45.00",
+    "46.00",
+    "47.00",
+    "48.00",
+    "49.00",
+    "50.00",
+    "51.00",
+    "52.00",
+    "53.00",
+    "54.00",
+    "55.00",
+    "56.00",
+    "57.00",
+    "58.00",
+    "59.00",
+    "60.00",
+    "61.00",
+    "62.00",
+    "63.00",
+    "64.00",
+    "65.00",
+    "66.00",
+    "67.00",
+    "68.00",
+    "69.00",
+    "70.00"
+   ],
+   "continentOnly": true,
+   "downloads": true,
+   "legend": "/img/dt-legend.png",
+   "unit": "m"
+  },
+  "C1": {
+   "times": [
+    "0.00",
+    "4.00",
+    "9.00",
+    "14.00",
+    "19.00",
+    "24.00",
+    "29.00",
+    "34.00",
+    "39.00",
+    "44.00",
+    "49.00",
+    "54.00",
+    "59.00",
+    "64.00",
+    "70.00",
+    "75.00",
+    "80.00",
+    "85.00",
+    "90.00",
+    "95.00",
+    "100.00",
+    "105.00",
+    "110.00",
+    "115.00",
+    "120.00",
+    "125.00",
+    "130.00",
+    "135.00",
+    "140.00",
+    "145.00",
+    "150.00",
+    "155.00",
+    "160.00"
+   ],
+   "continentOnly": true,
+   "downloads": true,
+   "legend": "/img/dt-legend.png",
+   "unit": "m"
+  },
+  "C1s": {
+   "times": [
+    "0.00",
+    "4.00",
+    "9.00",
+    "14.00",
+    "19.00",
+    "24.00",
+    "29.00",
+    "34.00",
+    "39.00",
+    "44.00",
+    "49.00",
+    "54.00",
+    "59.00",
+    "64.00",
+    "69.00",
+    "74.00",
+    "79.00",
+    "84.00",
+    "89.00",
+    "94.00",
+    "99.00",
+    "104.00",
+    "109.00",
+    "114.00",
+    "119.00",
+    "124.00",
+    "129.00",
+    "134.00",
+    "139.00",
+    "144.00",
+    "149.00",
+    "154.00",
+    "160.00",
+    "165.00",
+    "170.00",
+    "175.00",
+    "180.00",
+    "185.00",
+    "190.00",
+    "195.00",
+    "200.00",
+    "205.00",
+    "210.00",
+    "215.00",
+    "220.00",
+    "225.00",
+    "230.00"
+   ],
+   "continentOnly": true,
+   "downloads": true,
+   "legend": "/img/dt-legend.png",
+   "unit": "m"
+  },
+  "C2": {
+   "times": [
+    "0.00",
+    "4.00",
+    "9.00",
+    "14.00",
+    "19.00",
+    "24.00",
+    "29.00",
+    "34.00",
+    "39.00",
+    "44.00",
+    "49.00",
+    "54.00",
+    "59.00",
+    "64.00",
+    "69.00",
+    "74.00",
+    "79.00",
+    "84.00",
+    "89.00",
+    "94.00",
+    "99.00",
+    "104.00",
+    "109.00",
+    "114.00",
+    "119.00",
+    "124.00",
+    "129.00",
+    "134.00",
+    "139.00",
+    "144.00",
+    "149.00",
+    "154.00",
+    "160.00",
+    "165.00",
+    "170.00",
+    "175.00",
+    "180.00",
+    "185.00",
+    "190.00",
+    "195.00",
+    "200.00",
+    "205.00",
+    "210.00",
+    "215.00",
+    "220.00",
+    "225.00",
+    "230.00"
+   ],
+   "continentOnly": true,
+   "downloads": true,
+   "legend": "/img/dt-legend.png",
+   "unit": "m"
+  },
+  "C3": {
+   "times": [
+    "0.00",
+    "4.00",
+    "9.00",
+    "14.00",
+    "19.00",
+    "24.00",
+    "29.00",
+    "34.00",
+    "39.00",
+    "44.00",
+    "49.00",
+    "54.00",
+    "59.00",
+    "64.00",
+    "69.00",
+    "74.00",
+    "79.00",
+    "84.00",
+    "89.00",
+    "94.00",
+    "99.00",
+    "104.00",
+    "109.00",
+    "114.00",
+    "119.00",
+    "124.00",
+    "130.00",
+    "135.00",
+    "140.00",
+    "145.00",
+    "150.00",
+    "155.00",
+    "160.00",
+    "165.00",
+    "170.00",
+    "175.00",
+    "180.00",
+    "185.00",
+    "190.00",
+    "195.00",
+    "200.00",
+    "205.00",
+    "210.00",
+    "215.00",
+    "220.00",
+    "225.00",
+    "230.00"
+   ],
+   "continentOnly": true,
+   "downloads": true,
+   "legend": "/img/dt-legend.png",
+   "unit": "m"
+  },
+  "C4": {
+   "times": [
+    "0.00",
+    "4.00",
+    "9.00",
+    "14.00",
+    "19.00",
+    "24.00",
+    "29.00",
+    "34.00",
+    "39.00",
+    "44.00",
+    "49.00",
+    "54.00",
+    "59.00",
+    "64.00",
+    "69.00",
+    "74.00",
+    "79.00",
+    "84.00",
+    "89.00",
+    "94.00",
+    "99.00",
+    "104.00",
+    "109.00",
+    "114.00",
+    "119.00",
+    "124.00",
+    "129.00",
+    "134.00",
+    "139.00",
+    "144.00",
+    "149.00",
+    "154.00",
+    "160.00"
+   ],
+   "continentOnly": true,
+   "downloads": true,
+   "legend": "/img/dt-legend.png",
+   "unit": "m"
+  },
+  "C5": {
+   "times": [
+    "0.00",
+    "5.00",
+    "10.00",
+    "15.00",
+    "20.00",
+    "25.00",
+    "30.00",
+    "35.00",
+    "40.00",
+    "45.00",
+    "50.00",
+    "55.00",
+    "60.00",
+    "65.00",
+    "70.00",
+    "75.00",
+    "80.00",
+    "85.00",
+    "90.00",
+    "95.00",
+    "100.00",
+    "105.00",
+    "110.00",
+    "115.00",
+    "120.00",
+    "125.00",
+    "130.00",
+    "135.00",
+    "140.00"
+   ],
+   "continentOnly": true,
+   "downloads": true,
+   "legend": "/img/dt-legend.png",
+   "unit": "m"
+  },
+  "C6": {
+   "times": [
+    "0.00",
+    "5.00",
+    "10.00",
+    "15.00",
+    "20.00",
+    "25.00",
+    "30.00",
+    "35.00",
+    "40.00",
+    "45.00",
+    "50.00",
+    "55.00",
+    "60.00",
+    "65.00",
+    "70.00",
+    "75.00",
+    "80.00",
+    "85.00",
+    "90.00",
+    "95.00",
+    "100.00",
+    "105.00",
+    "110.00",
+    "115.00",
+    "120.00",
+    "125.00",
+    "130.00",
+    "135.00",
+    "140.00"
+   ],
+   "continentOnly": true,
+   "downloads": true,
+   "legend": "/img/dt-legend.png",
+   "unit": "m"
+  },
+  "gld189": {
+   "times": [
+    "0.00",
+    "8.00",
+    "18.00",
+    "28.00",
+    "38.00",
+    "49.00",
+    "59.00",
+    "69.00",
+    "79.00",
+    "89.00",
+    "99.00",
+    "109.00",
+    "119.00",
+    "129.00",
+    "139.00",
+    "149.00",
+    "159.00",
+    "169.00",
+    "179.00",
+    "190.00",
+    "200.00",
+    "210.00",
+    "220.00",
+    "230.00"
+   ],
+   "continentOnly": true,
+   "downloads": true,
+   "legend": "/img/dt-legend.png",
+   "unit": "m"
+  },
+  "gld321": {
+   "times": [
+    "0.00",
+    "10.00",
+    "20.00",
+    "31.00",
+    "41.00",
+    "51.00",
+    "61.00",
+    "71.00",
+    "81.00",
+    "91.00",
+    "101.00",
+    "111.00",
+    "121.00",
+    "131.00",
+    "141.00",
+    "151.00",
+    "161.00",
+    "171.00",
+    "181.00",
+    "191.00",
+    "201.00",
+    "211.00",
+    "221.00",
+    "231.00",
+    "239.00",
+    "249.00",
+    "259.00",
+    "269.00",
+    "279.00",
+    "289.00",
+    "300.00",
+    "310.00",
+    "320.00",
+    "330.00",
+    "340.00",
+    "350.00",
+    "360.00",
+    "370.00",
+    "380.00",
+    "390.00",
+    "400.00",
+    "410.00"
+   ],
+   "continentOnly": true,
+   "downloads": true,
+   "legend": "/img/dt-legend.png",
+   "unit": "m"
+  },
+  "gld324": {
+   "times": [
+    "0.00",
+    "8.00",
+    "18.00",
+    "28.00",
+    "38.00",
+    "48.00",
+    "58.00",
+    "68.00",
+    "78.00",
+    "88.00",
+    "98.00",
+    "108.00",
+    "118.00",
+    "128.00",
+    "138.00",
+    "149.00",
+    "159.00",
+    "169.00",
+    "179.00",
+    "189.00",
+    "199.00",
+    "209.00",
+    "219.00",
+    "229.00",
+    "239.00",
+    "249.00",
+    "259.00",
+    "269.00",
+    "279.00",
+    "289.00",
+    "299.00",
+    "309.00",
+    "319.00",
+    "329.00",
+    "339.00",
+    "350.00",
+    "360.00",
+    "370.00",
+    "380.00",
+    "390.00",
+    "400.00",
+    "410.00"
+   ],
+   "continentOnly": true,
+   "downloads": true,
+   "legend": "/img/dt-legend.png",
+   "unit": "m"
+  },
+  "gld428": {
+   "times": [
+    "0.00",
+    "5.00",
+    "10.00",
+    "15.00",
+    "20.00",
+    "25.00",
+    "30.00",
+    "35.00",
+    "40.00",
+    "45.00",
+    "50.00",
+    "55.00",
+    "60.00",
+    "65.00",
+    "70.00",
+    "75.00",
+    "80.00",
+    "85.00",
+    "90.00",
+    "95.00",
+    "100.00",
+    "105.00",
+    "110.00",
+    "115.00",
+    "120.00",
+    "125.00",
+    "130.00",
+    "135.00",
+    "140.00",
+    "145.00",
+    "150.00",
+    "155.00",
+    "160.00",
+    "165.00",
+    "170.00",
+    "175.00",
+    "180.00",
+    "185.00",
+    "190.00",
+    "195.00",
+    "200.00",
+    "205.00",
+    "210.00",
+    "215.00",
+    "220.00",
+    "225.00",
+    "230.00",
+    "235.00",
+    "240.00",
+    "245.00",
+    "250.00"
+   ],
+   "continentOnly": true,
+   "downloads": true,
+   "legend": "/img/dt-legend.png",
+   "unit": "m"
+  },
+  "gld428_m21": {
+   "times": [
+    "0.00",
+    "20.00",
+    "40.00",
+    "60.00",
+    "80.00",
+    "100.00",
+    "120.00",
+    "140.00",
+    "160.00",
+    "180.00",
+    "200.00",
+    "220.00",
+    "240.00",
+    "260.00",
+    "280.00",
+    "300.00",
+    "320.00",
+    "340.00",
+    "360.00",
+    "380.00",
+    "390.00",
+    "400.00",
+    "420.00",
+    "440.00",
+    "460.00",
+    "480.00",
+    "500.00",
+    "520.00",
+    "540.00",
+    "560.00",
+    "580.00",
+    "600.00",
+    "620.00",
+    "640.00",
+    "660.00",
+    "680.00",
+    "700.00",
+    "720.00",
+    "740.00",
+    "760.00",
+    "780.00",
+    "800.00",
+    "820.00",
+    "840.00",
+    "860.00",
+    "880.00",
+    "900.00",
+    "920.00",
+    "940.00",
+    "960.00",
+    "980.00",
+    "1000.00"
+   ],
+   "continentOnly": true,
+   "downloads": true,
+   "legend": "/img/dt-legend.png",
+   "unit": "m"
+  },
+  "gmcm9": {
+   "times": [
+    "0.00",
+    "4.00",
+    "9.00",
+    "14.00",
+    "19.00",
+    "24.00",
+    "29.00",
+    "34.00",
+    "39.00",
+    "44.00",
+    "49.00",
+    "54.00",
+    "59.00",
+    "64.00",
+    "69.00",
+    "74.00",
+    "79.00",
+    "84.00",
+    "89.00",
+    "94.00",
+    "99.00",
+    "104.00",
+    "109.00",
+    "114.00",
+    "119.00",
+    "124.00",
+    "129.00",
+    "135.00",
+    "140.00",
+    "145.00",
+    "150.00"
+   ],
+   "continentOnly": true,
+   "downloads": true,
+   "legend": "/img/dt-legend.png",
+   "unit": "m"
+  }
+ }
+}

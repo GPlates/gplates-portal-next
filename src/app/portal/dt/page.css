@@ -1,0 +1,64 @@
+/* shared by /portal/dt and /portal/dynamic_topography_model_list */
+
+.dt-papers {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.dt-papers details {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fff;
+}
+
+.dt-papers summary {
+  padding: 10px 15px;
+  background: #f5f5f5;
+  color: #333;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.dt-papers details[open] summary {
+  border-bottom: 1px solid #ddd;
+}
+
+.dt-paper-body {
+  padding: 12px 15px 4px;
+}
+
+.dt-model-columns {
+  columns: 3 220px;
+  column-gap: 24px;
+  margin: 0 0 16px;
+  padding-left: 20px;
+}
+
+.dt-model-columns li {
+  margin-bottom: 5px;
+  font-size: 17px;
+  break-inside: avoid;
+}
+
+.dt-sponsor {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 24px;
+  align-items: center;
+}
+
+.dt-sponsor img {
+  width: 100%;
+}
+
+@media (max-width: 640px) {
+  .dt-sponsor {
+    grid-template-columns: 1fr;
+  }
+
+  .dt-sponsor img {
+    max-width: 200px;
+  }
+}

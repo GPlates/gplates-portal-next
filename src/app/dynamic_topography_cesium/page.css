@@ -1,0 +1,387 @@
+/* Dynamic topography viewer: a sidebar of controls beside the globe, as the
+   old Dojo BorderContainer had, restyled to match the /cesium viewer. */
+
+.dt-page {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #111318;
+  color: #c9ccd6;
+  font-size: 14px;
+}
+
+.dt-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px 18px 20px;
+  overflow-y: auto;
+  background: #1a1d24;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dt-back {
+  color: #8fa8dd;
+  text-decoration: none;
+  font-size: 13px;
+}
+
+.dt-back:hover {
+  text-decoration: underline;
+}
+
+.dt-title {
+  margin: 0;
+  color: #fff;
+  font-size: 18px;
+  line-height: 1.3;
+}
+
+.dt-sidebar h2 {
+  margin: 0 0 4px;
+  color: #fff;
+  font-size: 15px;
+}
+
+.dt-frames {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 6px;
+}
+
+.dt-frames legend {
+  padding: 0 4px;
+  color: #9aa0ad;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.dt-frames label,
+.dt-graticule {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.dt-profile {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dt-point {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.dt-point label {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 2px;
+  font-size: 12px;
+  color: #9aa0ad;
+}
+
+.dt-point input,
+.dt-time select {
+  padding: 5px 6px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  background: #111318;
+  color: #fff;
+  font: inherit;
+}
+
+.dt-point button,
+.dt-button {
+  padding: 7px 10px;
+  border: 0;
+  border-radius: 4px;
+  background: rgba(96, 125, 190, 0.9);
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+}
+
+.dt-point button {
+  grid-column: 1 / -1;
+}
+
+.dt-point input {
+  width: 100%;
+  min-width: 0;
+}
+
+.dt-point button:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.dt-point button:hover:not(:disabled),
+.dt-button:hover {
+  background: rgba(116, 145, 210, 1);
+}
+
+.dt-hint,
+.dt-status {
+  margin: 0;
+  color: #9aa0ad;
+  font-size: 12px;
+}
+
+.dt-error {
+  margin: 0;
+  color: #ff9b8f;
+  font-size: 13px;
+}
+
+.dt-chart-button,
+.dt-legend {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: center;
+  cursor: zoom-in;
+}
+
+.dt-chart {
+  display: block;
+  border-radius: 4px;
+  background: #fff;
+  color: #222;
+}
+
+.dt-chart text {
+  fill: #222;
+}
+
+.dt-chart .dt-chart-fake {
+  fill: #b3261e;
+  font-style: italic;
+}
+
+.dt-chart-grid {
+  stroke: #e3e5ea;
+}
+
+.dt-chart-frame {
+  fill: none;
+  stroke: #9aa0ad;
+}
+
+.dt-chart-line {
+  fill: none;
+  stroke: #1f6fb4;
+}
+
+.dt-chart-point {
+  fill: #1f6fb4;
+}
+
+.dt-chart-point-now {
+  fill: #d62728;
+}
+
+.dt-downloads {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+}
+
+.dt-downloads a {
+  color: #8fa8dd;
+}
+
+.dt-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: auto;
+}
+
+.dt-legend img {
+  width: 100%;
+  border-radius: 4px;
+  background: #fff;
+}
+
+.dt-globe {
+  position: relative;
+  min-width: 0;
+}
+
+.dt-cesium {
+  position: absolute;
+  inset: 0;
+}
+
+.dt-globe-error {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.dt-globe-error a {
+  color: #8fa8dd;
+}
+
+.dt-time,
+.dt-topright,
+.dt-coords,
+.dt-fake-banner {
+  position: absolute;
+  background-color: rgba(24, 26, 32, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 6px;
+  backdrop-filter: blur(6px);
+}
+
+.dt-time {
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  width: min(520px, calc(100% - 32px));
+}
+
+.dt-time input[type='range'] {
+  flex: 1;
+  accent-color: #8fa8dd;
+}
+
+.dt-topright {
+  top: 10px;
+  right: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  padding: 4px;
+  background: none;
+  border: 0;
+  backdrop-filter: none;
+}
+
+.dt-graticule {
+  padding: 4px 10px;
+  background-color: rgba(24, 26, 32, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 6px;
+}
+
+.dt-fake-banner {
+  top: 10px;
+  left: 10px;
+  max-width: 280px;
+  margin: 0;
+  padding: 6px 10px;
+  color: #ffd18a;
+  font-size: 12px;
+}
+
+.dt-coords {
+  bottom: 70px;
+  right: 10px;
+  padding: 2px 8px;
+  font-family: monospace;
+}
+
+.dt-coords:empty {
+  display: none;
+}
+
+.dt-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.dt-modal-body {
+  position: relative;
+  width: min(960px, 100%);
+  max-height: 100%;
+  overflow: auto;
+  padding: 16px;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.dt-modal-close {
+  position: absolute;
+  top: 4px;
+  right: 8px;
+  border: 0;
+  background: none;
+  color: #444;
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.dt-modal-legend {
+  display: block;
+  width: 100%;
+}
+
+.dt-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+/* phones: globe on top, controls scroll underneath */
+@media (max-width: 760px) {
+  .dt-page {
+    grid-template-columns: 1fr;
+    grid-template-rows: 60vh auto;
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+
+  .dt-globe {
+    grid-row: 1;
+    height: 60vh;
+  }
+
+  .dt-sidebar {
+    grid-row: 2;
+    overflow: visible;
+    border-right: 0;
+  }
+
+  .dt-fake-banner {
+    display: none;
+  }
+
+  .dt-coords {
+    display: none;
+  }
+}
